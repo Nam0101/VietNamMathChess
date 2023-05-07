@@ -12,8 +12,8 @@ COLUMN = 11
 ROW = 9
 SQUARE_SIZE = 75
 
-WHITE = (255, 255, 255)
-BLACK = (0, 238, 238)
+WHITE = (238,238,210)
+BLACK = (118,150,86)
 
 
 class Game:
@@ -68,6 +68,7 @@ class Game:
     def show_start_screen(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'img')
+        background = pg.image.load(path.join(img_folder, 'background.png')).convert()
         pass
 
     def show_go_screen(self):
