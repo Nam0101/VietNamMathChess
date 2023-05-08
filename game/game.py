@@ -1,9 +1,7 @@
-import pygame
-import pygame as pg
-import sys
 from os import path
 
-from pygame import event
+import pygame
+import pygame as pg
 
 import state.state as state
 
@@ -31,16 +29,18 @@ class Game:
 
     def __init__(self):
         # initialize game window,
+        self.canvas = None
         self.all_sprites = None
+        self.selected_square = None
+        self.previous_square = None
+        self.highlight_color = (255, 255, 0)
         self.state = state.state()
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_icon(pg.image.load(icon))
         pg.display.set_caption(TITLE)
-        # xoay màn hình 90 độ
-        # self.screen = pg.transform.rotate(self.screen, 90)
-        # self.screen = pg.transform.flip(self.screen, True, False)
+        self.font_name = pg.font.match_font(FONT_NAME)
         self.clock = pg.time.Clock()
         self.running = True
         # self.board = [["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"],
@@ -74,8 +74,10 @@ class Game:
         while self.state.playing:
             self.clock.tick(FPS)
             self.update()
-            self.draw_state()
             self.get_piece_clicked()
+            self.draw_state()
+            pg.display.flip()
+
 
     def update(self):
         # Game Loop - Update
@@ -112,26 +114,39 @@ class Game:
 
     def draw_state(self):
         self.draw_board()
+        self.high_light()
         self.draw_piece()
-        pg.display.flip()
+
 
     def show_go_screen(self):
         # game over/continue
         pass
 
-    # return piece is clicked on
-    def get_piece(self, x, y):
-        if x < -1 or x > 9 or y < -1 or y > 11:
-            return "--"
-        return self.state.board[x][y]
-
     def get_piece_clicked(self):
         event_result = self.events()
         if event_result is not None:
             x, y = event_result
-            piece = self.get_piece(x, y)
+            self.selected_square = (x, y)
+            if x == INF and y == INF:
+                return None
+            piece = self.state.board[x][y]
             if piece != "--":
                 print("Vị trí: ", x, y)
                 print(piece)
                 return piece
+
+    def high_light(self):
+
+        if self.previous_square is not None:
+            x, y = self.previous_square
+            pg.draw.rect(self.screen, color[(x + y) % 2], (y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+        if self.selected_square is not None and self.selected_square != (INF, INF):
+            row, col = self.selected_square
+            rect = pygame.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+            pygame.draw.rect(self.screen, self.highlight_color, rect, 4)
+            self.previous_square = (row, col)
+
+
+
+
 
