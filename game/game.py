@@ -1,7 +1,11 @@
+import pygame
 import pygame as pg
 import sys
 from os import path
-import GameState.State as State
+
+from pygame import event
+
+import state.state as state
 
 WIDTH = 576
 HEIGHT = 704
@@ -11,15 +15,14 @@ FONT_NAME = 'arial'
 icon = 'img/logo.jfif'
 COLUMN = 9
 ROW = 11
-SQUARE_SIZE = HEIGHT//ROW
-
-
+SQUARE_SIZE = HEIGHT // ROW
+INF = 1000000000
 color = [(238, 238, 210), (118, 150, 86)]
 
 
 def show_start_screen():
     game_folder = path.dirname(__file__)
-    img_folder = path.join(game_folder, 'img')
+    img_folder = path.join(game_folder, '../img')
     background = pg.image.load(path.join(img_folder, 'background.png')).convert()
     pass
 
@@ -28,9 +31,8 @@ class Game:
 
     def __init__(self):
         # initialize game window,
-        self.state = State.state()
-        self.playing = None
         self.all_sprites = None
+        self.state = state.state()
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -58,7 +60,8 @@ class Game:
         self.piece_img = {}
         for i in range(len(self.piece)):
             self.piece_img[self.piece[i]] = pg.image.load("img/" + self.piece[i] + ".png").convert_alpha()
-            self.piece_img[self.piece[i]] = pg.transform.scale(self.piece_img[self.piece[i]], (SQUARE_SIZE, SQUARE_SIZE))
+            self.piece_img[self.piece[i]] = pg.transform.scale(self.piece_img[self.piece[i]],
+                                                               (SQUARE_SIZE, SQUARE_SIZE))
 
     def new(self):
         # start a new game
@@ -67,12 +70,12 @@ class Game:
 
     def run(self):
         # Game Loop
-        self.playing = True
-        while self.playing:
+        self.state.playing = True
+        while self.state.playing:
             self.clock.tick(FPS)
-            self.events()
             self.update()
             self.draw_state()
+            self.get_piece_clicked()
 
     def update(self):
         # Game Loop - Update
@@ -82,9 +85,16 @@ class Game:
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
-                if self.playing:
-                    self.playing = False
+                if self.state.playing:
+                    self.state.playing = False
                 self.running = False
+                return INF, INF
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                row = y // SQUARE_SIZE
+                col = x // SQUARE_SIZE
+                return row, col
+        return INF, INF
 
     def draw_board(self):
         for i in range(ROW):
@@ -111,6 +121,17 @@ class Game:
 
     # return piece is clicked on
     def get_piece(self, x, y):
-        if x < 0 or x > 8 or y < 0 or y > 10:
+        if x < -1 or x > 9 or y < -1 or y > 11:
             return "--"
         return self.state.board[x][y]
+
+    def get_piece_clicked(self):
+        event_result = self.events()
+        if event_result is not None:
+            x, y = event_result
+            piece = self.get_piece(x, y)
+            if piece != "--":
+                print("Vị trí: ", x, y)
+                print(piece)
+                return piece
+
