@@ -27,22 +27,25 @@ class state():
                       ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
                       ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
                       ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"]]
-        self.is_end = False
-        self.AI_turn = False
-        self.AI_score = 0
-        self.player_score = 0
+        self.playing = False
+        self.have_ai = False
+        self.red_turn = False
+        self.red_score = 0
+        self.blue_score = 0
         self.AI_side = "b"
         self.player_side = "r"
 
     def check_end(self):
         if self.board[4][2] == "--" or self.board[4][8] == "--":
-            self.is_end = True
+            self.playing = True
             return True
         return False
 
-    def check_win(self):
-        if self.AI_score >= 30 or self.player_score >= 30:
-            self.is_end = True
-            return True
-        return False
+    def update_board(self,startCol,startRow,endCol,endRow):
+        self.board[endRow][endCol] = self.board[startRow][startCol]
+        self.board[startRow][startCol] = "--"
+        self.red_turn = not self.red_turn
+
+    def is_playing(self):
+        return self.playing
 
