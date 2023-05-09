@@ -1,9 +1,7 @@
 from os import path
-
-import pygame
 import pygame as pg
-
 import state.state as state
+import state.move as move
 
 WIDTH = 576
 HEIGHT = 704
@@ -28,13 +26,16 @@ def show_start_screen():
 class Game:
 
     def __init__(self):
+        self.state = state.state()
         # initialize game window,
         self.canvas = None
         self.all_sprites = None
-        self.selected_square = None
-        self.previous_square = None
-        self.highlight_color = (255, 255, 0)
-        self.state = state.state()
+        self.selected_square = ()
+        self.previous_square = ()
+        self.valid_moves = self.state.get_all_possible_move()
+        self.player_clicks = []
+        self.move_made = False
+        self.highlight_color = (255, 0, 0)
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -43,18 +44,6 @@ class Game:
         self.font_name = pg.font.match_font(FONT_NAME)
         self.clock = pg.time.Clock()
         self.running = True
-        # self.board = [["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"],
-        #               ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-        #               ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
-        #               ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"]]
-
         self.piece = ["b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9",
                       "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"]
         self.piece_img = {}
@@ -74,10 +63,9 @@ class Game:
         while self.state.playing:
             self.clock.tick(FPS)
             self.update()
-            self.get_piece_clicked()
+            self.events()
             self.draw_state()
             pg.display.flip()
-
 
     def update(self):
         # Game Loop - Update
@@ -90,13 +78,33 @@ class Game:
                 if self.state.playing:
                     self.state.playing = False
                 self.running = False
-                return INF, INF
             elif event.type == pg.MOUSEBUTTONDOWN:
-                x, y = pygame.mouse.get_pos()
+                x, y = pg.mouse.get_pos()
                 row = y // SQUARE_SIZE
                 col = x // SQUARE_SIZE
-                return row, col
-        return INF, INF
+                if self.selected_square == (row, col):
+                    self.selected_square = ()
+                    self.player_clicks = []
+                else:
+                    self.selected_square = (row, col)
+                    self.player_clicks.append(self.selected_square)
+                if len(self.player_clicks) == 2:
+                    self.previous_square = self.player_clicks[0]
+                    movement = move.move(self.player_clicks[0], self.player_clicks[1], self.state.board)
+                    self.move_made = True
+                    self.state.make_move(movement)
+                    self.player_clicks = []
+                    self.selected_square = ()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_z:
+                    self.state.undo_move()
+                    self.move_made = True
+                if event.key == pg.K_ESCAPE:
+                    self.state.playing = False
+                    self.running = False
+            if self.move_made:
+                self.valid_moves = self.state.get_all_possible_move()
+                self.move_made = False
 
     def draw_board(self):
         for i in range(ROW):
@@ -114,39 +122,30 @@ class Game:
 
     def draw_state(self):
         self.draw_board()
-        self.high_light()
         self.draw_piece()
-
+        self.high_light()
 
     def show_go_screen(self):
         # game over/continue
         pass
 
-    def get_piece_clicked(self):
-        event_result = self.events()
-        if event_result is not None:
-            x, y = event_result
-            self.selected_square = (x, y)
-            if x == INF and y == INF:
-                return None
-            piece = self.state.board[x][y]
-            if piece != "--":
-                print("Vị trí: ", x, y)
-                print(piece)
-                return piece
-
     def high_light(self):
-
-        if self.previous_square is not None:
-            x, y = self.previous_square
-            pg.draw.rect(self.screen, color[(x + y) % 2], (y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-        if self.selected_square is not None and self.selected_square != (INF, INF):
+        # if self.previous_square is not None:
+        #     x, y = self.previous_square
+        #     pg.draw.rect(self.screen, color[(x + y) % 2], (y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+        # if self.selected_square is not None and self.selected_square != (INF, INF):
+        #     row, col = self.selected_square
+        #     rect = pg.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+        #     pg.draw.rect(self.screen, self.highlight_color, rect, 4)
+        #     self.previous_square = (row, col)
+        if self.selected_square != ():
             row, col = self.selected_square
-            rect = pygame.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
-            pygame.draw.rect(self.screen, self.highlight_color, rect, 4)
-            self.previous_square = (row, col)
-
-
-
-
-
+            if self.state.board[row][col][0] == ('r' if self.state.red_turn else 'b'):
+                pg.draw.rect(self.screen, self.highlight_color,
+                             (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 4)
+                self.previous_square = (row, col)
+                for movement in self.valid_moves:
+                    if movement.startRow == row and movement.startCol == col:
+                        pg.draw.rect(self.screen, self.highlight_color,
+                                     (movement.endCol * SQUARE_SIZE, movement.endRow * SQUARE_SIZE,
+                                      SQUARE_SIZE, SQUARE_SIZE), 4)
