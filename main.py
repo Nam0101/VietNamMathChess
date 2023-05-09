@@ -1,7 +1,9 @@
+import sys
 
 import pygame as pg
-import sys
+
 import game.game as game
+
 if __name__ == '__main__':
 
     g = game.Game()

@@ -1,4 +1,4 @@
-from state.move import move
+from .move import move
 
 COlUMN = 9
 ROW = 11
@@ -6,9 +6,9 @@ ROW = 11
 move_direction = [[-1, 0], [0, 1], [1, 0], [0, -1], [-1, 1], [1, 1], [1, -1], [-1, -1]]
 
 
-class state():
+class state:
     def __init__(self):
-        self.board = [["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"],
+        self.board = [["b9", "b8", "b7", "b6", "b5", "b4", "b3", "b2", "b1"],
                       ["--", "--", "--", "--", "b0", "--", "--", "--", "--"],
                       ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
                       ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
@@ -26,35 +26,34 @@ class state():
         self.blue_score = 0
         self.move_log = []
 
-    def check_end(self):
-        if self.board[4][2] == "--" or self.board[4][8] == "--":
-            self.playing = False
-            return False
-        return True
+    def update_board(self, movement):
+        self.board[movement.start_row][movement.start_col] = "--"
+        self.board[movement.end_row][movement.end_col] = movement.piece_moved
 
-    def update_board(self, startCol, startRow, endCol, endRow):
-        self.board[endRow][endCol] = self.board[startRow][startCol]
-        self.board[startRow][startCol] = "--"
-        self.red_turn = not self.red_turn
 
     def is_playing(self):
         return self.playing
 
-    def make_move(self, move):
-        self.update_board(move.startCol, move.startRow, move.endCol, move.endRow)
-        self.move_log.append(move)
-        self.check_end()
-        print(self.move_log.__len__())
-        self.red_turn = not self.red_turn
+    def make_move(self, movement, valid_moves):
+        if self.red_turn and self.board[movement.start_row][movement.start_col][0] == "b":
+            return
+        if not self.red_turn and self.board[movement.start_row][movement.start_col][0] == "r":
+            return
+        if self.board[movement.end_row][movement.end_col][0] == self.board[movement.start_row][movement.start_col][0]:
+            return
+        if self.board[movement.start_row][movement.start_col] == "--":
+            return
+        for valid_move in valid_moves:
+            if movement == valid_move:
+                self.update_board(movement)
+                self.move_log.append(movement)
+                self.red_turn = not self.red_turn
 
     def undo_move(self):
         if self.move_log.__len__() != 0:
-            move = self.move_log.pop()
-            self.update_board(move.endCol, move.endRow, move.startCol, move.startRow)
+            movement = self.move_log.pop()
+            self.update_board(movement.endCol, movement.endRow, movement.startCol, movement.startRow)
             self.red_turn = not self.red_turn
-            self.check_end()
-            return move
-        return None
 
     def get_all_possible_move(self):
         moves = []
@@ -66,24 +65,65 @@ class state():
                     if piece_step == 0:
                         continue
                     self.get_move_for_piece(piece_step, row, col, moves)
-
+                    self.attack_move(piece_step, turn, row, col, moves)
         return moves
 
     def get_move_for_piece(self, piece_step, row, col, moves):
         for direction in move_direction:
             for i in range(1, piece_step + 1):
-                endRow = row + direction[0] * i
-                endCol = col + direction[1] * i
-                if endRow < 0 or endRow >= ROW or endCol < 0 or endCol >= COlUMN:
+                end_row = row + direction[0] * i
+                end_col = col + direction[1] * i
+                if end_row < 0 or end_row >= ROW or end_col < 0 or end_col >= COlUMN:
                     break
-                endPiece = self.board[endRow][endCol]
-                if endPiece == "--":
-                    moves.append(move((row, col), (endRow, endCol), self.board))
+                end_piece = self.board[end_row][end_col]
+                if end_piece == "--":
+                    moves.append(move((row, col), (end_row, end_col), self.board))
                 else:
-                    if endPiece[0] == "r" and self.red_turn:
-                        break
-                    elif endPiece[0] == "b" and not self.red_turn:
-                        break
+                    break
+
+    def attack_move(self, piece_step, piece_color, row, col, moves):
+        for i, j in move_direction:
+            if 0 <= row + i < ROW and 0 <= col + j < COlUMN:
+                color = self.board[row + i][col + j][0]
+                if color == piece_color:
+                    team_piece = int(self.board[row + i][col + j][1])
+                    if team_piece == 0:
+                        continue
+                    add_attack = piece_step + team_piece
+                    sub_attack = piece_step - team_piece
+                    multi_attack = piece_step * team_piece
+                    division_attack = piece_step // team_piece
+                    remain_attack = piece_step % team_piece
+                    attack_step = [add_attack, sub_attack, multi_attack, division_attack, remain_attack]
+                    self.get_attack_move(attack_step, (row, col), (i, j), moves)
+
+    def get_attack_move(self, attack_step, current_piece, direction, moves):
+        enemy_color = "b" if self.red_turn else "r"
+        row, col = current_piece
+        i, j = direction
+        row, col = (row + i), (col + j)
+        for step in attack_step:
+            if step <= 0:
+                continue
+            step %= 10
+            can_attack = True
+            for x in range(1, step):
+                end_row = row + i * x
+                end_col = col + j * x
+                if 0 <= end_row < ROW and 0 <= end_col < COlUMN:
+                    end_piece = self.board[end_row][end_col]
+                    if end_piece == "--":
+                        continue
                     else:
-                        moves.append(move((row, col), (endRow, endCol), self.board))
+                        can_attack = False
                         break
+                else:
+                    can_attack = False
+                    break
+            if can_attack:
+                end_row = row + i * step
+                end_col = col + j * step
+                if 0 <= end_row < 11 and 0 <= end_col < 9:
+                    end_piece = self.board[end_row][end_col]
+                    if end_piece[0] == enemy_color:
+                        moves.append(move(current_piece, (end_row, end_col), self.board))
