@@ -26,25 +26,26 @@ class state:
         self.blue_score = 0
         self.move_log = []
 
-    def update_board(self, start_col, start_row, end_col, end_row):
-        self.board[end_row][end_col] = self.board[start_row][start_col]
-        self.board[start_row][start_col] = "--"
+    def update_board(self, movement):
+        self.board[movement.start_row][movement.start_col] = "--"
+        self.board[movement.end_row][movement.end_col] = movement.piece_moved
+
 
     def is_playing(self):
         return self.playing
 
     def make_move(self, movement, valid_moves):
-        if self.red_turn and self.board[movement.startRow][movement.startCol][0] == "b":
+        if self.red_turn and self.board[movement.start_row][movement.start_col][0] == "b":
             return
-        if not self.red_turn and self.board[movement.startRow][movement.startCol][0] == "r":
+        if not self.red_turn and self.board[movement.start_row][movement.start_col][0] == "r":
             return
-        if self.board[movement.endRow][movement.endCol][0] == self.board[movement.startRow][movement.startCol][0]:
+        if self.board[movement.end_row][movement.end_col][0] == self.board[movement.start_row][movement.start_col][0]:
             return
-        if self.board[movement.startRow][movement.startCol] == "--":
+        if self.board[movement.start_row][movement.start_col] == "--":
             return
         for valid_move in valid_moves:
             if movement == valid_move:
-                self.update_board(movement.startCol, movement.startRow, movement.endCol, movement.endRow)
+                self.update_board(movement)
                 self.move_log.append(movement)
                 self.red_turn = not self.red_turn
 
@@ -96,9 +97,9 @@ class state:
                     attack_step = [add_attack, sub_attack, multi_attack, division_attack, remain_attack]
                     self.get_attack_move(attack_step, (row, col), (i, j), moves)
 
-    def get_attack_move(self, attack_step,curent_piece, direction, moves):
+    def get_attack_move(self, attack_step, current_piece, direction, moves):
         enemy_color = "b" if self.red_turn else "r"
-        row, col = curent_piece
+        row, col = current_piece
         i, j = direction
         row, col = (row + i), (col + j)
         for step in attack_step:
@@ -106,10 +107,10 @@ class state:
                 continue
             step %= 10
             can_attack = True
-            for k in range(1, step):
-                end_row = row + direction[0] * k
-                end_col = col + direction[1] * k
-                if 0 <= end_row < 11 and 0 <= end_col < 9:  # on board
+            for x in range(1, step):
+                end_row = row + i * x
+                end_col = col + j * x
+                if 0 <= end_row < ROW and 0 <= end_col < COlUMN:
                     end_piece = self.board[end_row][end_col]
                     if end_piece == "--":
                         continue
@@ -125,4 +126,4 @@ class state:
                 if 0 <= end_row < 11 and 0 <= end_col < 9:
                     end_piece = self.board[end_row][end_col]
                     if end_piece[0] == enemy_color:
-                        moves.append(move(curent_piece, (end_row, end_col), self.board))
+                        moves.append(move(current_piece, (end_row, end_col), self.board))

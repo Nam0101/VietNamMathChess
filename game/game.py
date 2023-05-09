@@ -144,7 +144,7 @@ class Game:
                              (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 4)
                 self.previous_square = (row, col)
                 for movement in self.valid_moves:
-                    if movement.startRow == row and movement.startCol == col:
+                    if movement.start_row == row and movement.start_col == col:
                         pg.draw.rect(self.screen, self.highlight_color[0 if self.state.red_turn else 1],
-                                     (movement.endCol * SQUARE_SIZE, movement.endRow * SQUARE_SIZE,
+                                     (movement.end_col * SQUARE_SIZE, movement.end_row * SQUARE_SIZE,
                                       SQUARE_SIZE, SQUARE_SIZE), 4)
