@@ -41,7 +41,7 @@ view2 = Tk()
 view2.title(" CỜ TOÁN VIỆT NAM")
 view2.geometry("600x600+400+50")
 view2.resizable(False, False)
-view2.iconbitmap("D:\Tri_tue_nhan_tao\img\logo.ico")
+view2.iconbitmap("../img/logo.ico")
 view2.configure(background="#769656")
 
 label_title = Label(

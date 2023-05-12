@@ -14,7 +14,7 @@ view3 = Tk()
 view3.title(" CỜ TOÁN VIỆT NAM")
 view3.geometry("600x600+400+50")
 view3.resizable(False, False)
-view3.iconbitmap("D:\Tri_tue_nhan_tao\img\logo.ico")
+view3.iconbitmap("../img/logo.ico")
 view3.configure(background="#769656")
 
 label_title = Label(
