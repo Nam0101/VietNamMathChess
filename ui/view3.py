@@ -3,7 +3,7 @@ from tkinter import *
 import pygame as pg
 import sys
 
-path = "d:\\ai\\VietNamMathChess"
+path = "..//VietNamMathChess"
 sys.path.append(path)
 from game import game
 
