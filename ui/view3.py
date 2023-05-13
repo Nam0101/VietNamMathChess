@@ -8,6 +8,10 @@ sys.path.append(path)
 from game import game
 
 
+def show_view3():
+    view3.deiconify()
+
+
 def click_play():
     view3.destroy()
     g = game.Game()
@@ -18,7 +22,10 @@ def click_play():
 
 
 def click_back():
-    view3.destroy()
+    view3.withdraw()
+    from ui import view1
+
+    view1.show_view1()
 
 
 view3 = Tk()

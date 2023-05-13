@@ -1,7 +1,10 @@
 from tkinter import *
-import sys
 
 x = 3
+
+
+def show_view2():
+    view2.deiconify()
 
 
 def click_tt1():
@@ -29,13 +32,17 @@ def clicktt3():
 
 
 def click_next():
-    view2.destroy()
+    view2.withdraw()
     from ui import view3
+
+    view3.show_view3()
 
 
 def click_back():
-    view2.destroy()
+    view2.withdraw()
     from ui import view1
+
+    view1.show_view1()
 
 
 view2 = Tk()

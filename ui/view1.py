@@ -1,8 +1,10 @@
 from tkinter import *
-import sys
-
 
 x = 3
+
+
+def show_view1():
+    view1.deiconify()
 
 
 def click_nguoi_nguoi():
@@ -34,11 +36,15 @@ def click_huong_dan():
 
 
 def click_next():
-    view1.destroy()
+    view1.withdraw()
     if x == 1:
         from ui import view3
+
+        view3.show_view3()
     else:
         from ui import view2
+
+        view2.show_view2()
 
 
 view1 = Tk()
