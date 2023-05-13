@@ -1,8 +1,20 @@
 from tkinter import *
 
+import pygame as pg
+import sys
+
+path = "d:\\ai\\VietNamMathChess"
+sys.path.append(path)
+from game import game
+
 
 def click_play():
-    pass
+    view3.destroy()
+    g = game.Game()
+    while g.running:
+        g.new()
+    pg.quit()
+    sys.exit()
 
 
 def click_back():

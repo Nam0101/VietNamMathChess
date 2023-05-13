@@ -1,4 +1,5 @@
 from tkinter import *
+import sys
 
 x = 3
 
@@ -29,10 +30,12 @@ def clicktt3():
 
 def click_next():
     view2.destroy()
+    from ui import view3
 
 
 def click_back():
     view2.destroy()
+    from ui import view1
 
 
 view2 = Tk()

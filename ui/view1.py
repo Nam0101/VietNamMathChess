@@ -1,4 +1,6 @@
 from tkinter import *
+import sys
+
 
 x = 3
 
@@ -34,9 +36,9 @@ def click_huong_dan():
 def click_next():
     view1.destroy()
     if x == 1:
-        pass
+        from ui import view3
     else:
-        pass
+        from ui import view2
 
 
 view1 = Tk()
