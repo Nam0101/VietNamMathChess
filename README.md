@@ -1,3 +1,3 @@
 # VietNamMathChess
 
-Viet Nam Math Chess project
+VietNam Math Chess project

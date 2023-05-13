@@ -1,4 +1,4 @@
-from .move import move
+from .move import Move
 
 COlUMN = 9
 ROW = 11
@@ -6,7 +6,7 @@ ROW = 11
 move_direction = [[-1, 0], [0, 1], [1, 0], [0, -1], [-1, 1], [1, 1], [1, -1], [-1, -1]]
 
 
-class state:
+class State:
     def __init__(self):
         self.board = [["b9", "b8", "b7", "b6", "b5", "b4", "b3", "b2", "b1"],
                       ["--", "--", "--", "--", "b0", "--", "--", "--", "--"],
@@ -30,7 +30,6 @@ class state:
         self.board[movement.start_row][movement.start_col] = "--"
         self.board[movement.end_row][movement.end_col] = movement.piece_moved
 
-
     def is_playing(self):
         return self.playing
 
@@ -46,14 +45,37 @@ class state:
         for valid_move in valid_moves:
             if movement == valid_move:
                 self.update_board(movement)
+                self.calculate_score()
                 self.move_log.append(movement)
                 self.red_turn = not self.red_turn
 
     def undo_move(self):
         if self.move_log.__len__() != 0:
             movement = self.move_log.pop()
-            self.update_board(movement.endCol, movement.endRow, movement.startCol, movement.startRow)
+            self.board[movement.start_row][movement.start_col] = movement.piece_moved
+            self.board[movement.end_row][movement.end_col] = movement.piece_captured
+            self.calculate_score()
             self.red_turn = not self.red_turn
+
+    def calculate_score(self):
+        self.red_score = 45
+        self.blue_score = 45
+        for row in range(ROW):
+            for col in range(COlUMN):
+                piece = self.board[row][col]
+                if piece == "--":
+                    continue
+                if piece[0] == "r":
+                    self.blue_score -= int(piece[1])
+                else:
+                    self.red_score -= int(piece[1])
+
+    def is_end(self):
+        if self.red_score >= 30 or self.blue_score >= 30:
+            return True
+        if self.board[1][4] != 'b0' or self.board[9][4] != 'r0':
+            return True
+        return False
 
     def get_all_possible_move(self):
         moves = []
@@ -77,7 +99,7 @@ class state:
                     break
                 end_piece = self.board[end_row][end_col]
                 if end_piece == "--":
-                    moves.append(move((row, col), (end_row, end_col), self.board))
+                    moves.append(Move((row, col), (end_row, end_col), self.board))
                 else:
                     break
 
@@ -126,4 +148,4 @@ class state:
                 if 0 <= end_row < 11 and 0 <= end_col < 9:
                     end_piece = self.board[end_row][end_col]
                     if end_piece[0] == enemy_color:
-                        moves.append(move(current_piece, (end_row, end_col), self.board))
+                        moves.append(Move(current_piece, (end_row, end_col), self.board))
