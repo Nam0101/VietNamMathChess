@@ -8,7 +8,7 @@ import state.state as state
 WIDTH = 576
 HEIGHT = 704
 TITLE = "Cờ Toán Việt Nam"
-FPS = 60
+FPS = 15
 FONT_NAME = 'arial'
 icon = 'img/logo.jfif'
 COLUMN = 9
@@ -18,17 +18,13 @@ INF = 1000000000
 color = [(238, 238, 210), (118, 150, 86)]
 
 
-def show_start_screen():
-    game_folder = path.dirname(__file__)
-    img_folder = path.join(game_folder, '../img')
-    background = pg.image.load(path.join(img_folder, 'background.png')).convert()
-    pass
+
 
 
 class Game:
 
     def __init__(self):
-        self.state = state.state()
+        self.state = state.State()
         # initialize game window,
         self.canvas = None
         self.all_sprites = None
@@ -92,9 +88,10 @@ class Game:
                     self.player_clicks.append(self.selected_square)
                 if len(self.player_clicks) == 2:
                     self.previous_square = self.player_clicks[0]
-                    movement = move.move(self.player_clicks[0], self.player_clicks[1], self.state.board)
+                    movement = move.Move(self.player_clicks[0], self.player_clicks[1], self.state.board)
                     self.move_made = True
                     self.state.make_move(movement, self.valid_moves)
+                    print(self.state.red_score, self.state.blue_score)
                     self.player_clicks = []
                     self.selected_square = ()
             elif event.type == pg.KEYDOWN:
@@ -132,11 +129,6 @@ class Game:
         pass
 
     def high_light(self):
-        # if self.previous_square is not None: x, y = self.previous_square pg.draw.rect(self.screen, color[(x + y) %
-        # 2], (y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)) if self.selected_square is not None and
-        # self.selected_square != (INF, INF): row, col = self.selected_square rect = pg.Rect(col * SQUARE_SIZE,
-        # row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE) pg.draw.rect(self.screen, self.highlight_color, rect,
-        # 4) self.previous_square = (row, col)
         if self.selected_square != () and self.selected_square != (INF, INF):
             row, col = self.selected_square
             if self.state.board[row][col][0] == ('r' if self.state.red_turn else 'b'):

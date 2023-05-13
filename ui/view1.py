@@ -34,16 +34,16 @@ def click_huong_dan():
 def click_next():
     view1.destroy()
     if x == 1:
-        import view3
+        pass
     else:
-        import view2
+        pass
 
 
 view1 = Tk()
 view1.title(" CỜ TOÁN VIỆT NAM")
 view1.geometry("600x600+400+50")
 view1.resizable(False, False)
-view1.iconbitmap("../img/logo.ico")
+view1.iconbitmap("img/logo.ico")
 view1.configure(background="#769656")
 
 label_title = Label(
@@ -67,7 +67,6 @@ button_nguoi_nguoi = Button(
 )
 button_nguoi_nguoi.place(x=170, y=150)
 
-
 button_nguoi_may = Button(
     view1,
     text="CHƠI VỚI MÁY",
@@ -79,7 +78,6 @@ button_nguoi_may = Button(
     command=click_nguoi_may,
 )
 button_nguoi_may.place(x=170, y=250)
-
 
 button_may_may = Button(
     view1,
@@ -116,6 +114,5 @@ button_next = Button(
     command=click_next,
 )
 button_next.place(x=350, y=480)
-
 
 view1.mainloop()

@@ -7,14 +7,13 @@ def click_play():
 
 def click_back():
     view3.destroy()
-    import view1
 
 
 view3 = Tk()
-view3.title(" CỜ TOÁN VIỆT NAM")
+view3.title("CỜ TOÁN VIỆT NAM")
 view3.geometry("600x600+400+50")
 view3.resizable(False, False)
-view3.iconbitmap("../img/logo.ico")
+view3.iconbitmap("img/logo.ico")
 view3.configure(background="#769656")
 
 label_title = Label(
@@ -69,7 +68,6 @@ label_scale2 = Label(
     font=("arial", 20, "bold"),
 )
 label_scale2.place(x=330, y=300)
-
 
 button_back = Button(
     view3,

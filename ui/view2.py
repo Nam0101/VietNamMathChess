@@ -29,19 +29,17 @@ def clicktt3():
 
 def click_next():
     view2.destroy()
-    import view3
 
 
 def click_back():
     view2.destroy()
-    import view1
 
 
 view2 = Tk()
 view2.title(" CỜ TOÁN VIỆT NAM")
 view2.geometry("600x600+400+50")
 view2.resizable(False, False)
-view2.iconbitmap("../img/logo.ico")
+view2.iconbitmap("img/logo.ico")
 view2.configure(background="#769656")
 
 label_title = Label(
@@ -65,7 +63,6 @@ button_tt1 = Button(
 )
 button_tt1.place(x=170, y=150)
 
-
 button_tt2 = Button(
     view2,
     text="THUẬT TOÁN 2",
@@ -77,7 +74,6 @@ button_tt2 = Button(
     command=click_tt2,
 )
 button_tt2.place(x=170, y=250)
-
 
 buttontt3 = Button(
     view2,

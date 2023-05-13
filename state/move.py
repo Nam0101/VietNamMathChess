@@ -1,4 +1,4 @@
-class move:
+class Move:
     # map key to value
     # key : value
     ranks_to_rows = {"1": 10, "2": 9, "3": 8, "4": 7, "5": 6, "6": 5,
@@ -25,5 +25,5 @@ class move:
 
     # override equals method
     def __eq__(self, other):
-        if isinstance(other, move):
+        if isinstance(other, Move):
             return self.move_ID == other.move_ID
