@@ -1,4 +1,5 @@
 from tkinter import *
+from PIL import ImageTk, Image
 
 x = 3
 
@@ -51,6 +52,11 @@ view2.geometry("600x600+400+50")
 view2.resizable(False, False)
 view2.iconbitmap("img/logo.ico")
 view2.configure(background="#769656")
+# img2 = Image.open("img/b1.png")
+# # img = img.resize((600, 600), Image.ANTIALIAS)
+# img2 = ImageTk.PhotoImage(img2)
+# panel = Label(view2, image=img2)
+# panel.place(x=0, y=0, relwidth=1, relheight=1)
 
 label_title = Label(
     view2,

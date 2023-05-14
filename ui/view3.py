@@ -1,5 +1,5 @@
 from tkinter import *
-
+from PIL import ImageTk, Image
 import pygame as pg
 import sys
 
@@ -28,12 +28,23 @@ def click_back():
     view1.show_view1()
 
 
+def update_scale():
+    label_scale2.config(text=scale.get())
+    label_scale2.after(15, update_scale)
+
+
 view3 = Tk()
 view3.title("CỜ TOÁN VIỆT NAM")
 view3.geometry("600x600+400+50")
 view3.resizable(False, False)
 view3.iconbitmap("img/logo.ico")
 view3.configure(background="#769656")
+# img = Image.open("img/bg6.png")
+# # img = img.resize((600, 600), Image.ANTIALIAS)
+# img = ImageTk.PhotoImage(img)
+# panel = Label(view3, image=img)
+# # panel.image = img
+# panel.place(x=0, y=0, relwidth=1, relheight=1)
 
 label_title = Label(
     view3,
@@ -54,17 +65,6 @@ scale = Scale(
     length=400,
 )
 scale.place(x=100, y=200)
-
-button_ok = Button(
-    view3,
-    text="OK",
-    bg="#17f30c",
-    width=5,
-    height=2,
-    font=("arial", 10, "bold"),
-    command=lambda: label_scale2.config(text=scale.get()),
-)
-button_ok.place(x=510, y=200)
 
 label_scale1 = Label(
     view3,
@@ -87,6 +87,8 @@ label_scale2 = Label(
     font=("arial", 20, "bold"),
 )
 label_scale2.place(x=330, y=300)
+update_scale()
+
 
 button_back = Button(
     view3,
