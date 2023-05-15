@@ -4,6 +4,7 @@ import pygame as pg
 
 import state.move as move
 import state.state as state
+import ai.stateEvaluation as stateEvaluation
 
 WIDTH = 576
 HEIGHT = 704
@@ -28,6 +29,7 @@ class Game:
         self.selected_square = (INF, INF)
         self.previous_square = ()
         self.valid_moves = self.state.get_all_possible_move()
+        # self.evaluation = stateEvaluation.StateEvaluation(self.state)
         self.player_clicks = []
         self.move_made = False
         self.highlight_color = [(255, 0, 0), (0, 0, 255)]
@@ -71,7 +73,6 @@ class Game:
 
     def events(self):
         self.human_turn = (self.state.red_turn and self.player_one) or (not self.state.red_turn and self.player_two)
-
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
@@ -107,6 +108,13 @@ class Game:
             if self.move_made:
                 self.valid_moves = self.state.get_all_possible_move()
                 self.move_made = False
+            if not self.human_turn:
+                self.evaluation = stateEvaluation.StateEvaluation(self.state)
+                print(self.state.board)
+                # movement = self.evaluation.minimax_move(3, True)
+                movement = self.evaluation.find_best_move()
+                self.state.make_move(movement, self.valid_moves)
+                self.move_made = True
 
     def draw_board(self):
         for i in range(ROW):

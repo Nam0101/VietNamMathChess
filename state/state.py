@@ -1,3 +1,5 @@
+from random import randint
+
 from .move import Move
 
 COlUMN = 9
@@ -25,6 +27,7 @@ class State:
         self.red_score = 0
         self.blue_score = 0
         self.move_log = []
+        self.checkmate = False
 
     def update_board(self, movement):
         self.board[movement.start_row][movement.start_col] = "--"
@@ -44,6 +47,8 @@ class State:
             return
         for valid_move in valid_moves:
             if movement == valid_move:
+                if movement.piece_captured != "--":
+                    print('piece moved: ' + movement.piece_moved, 'piece captured: ' + movement.piece_captured)
                 self.update_board(movement)
                 self.calculate_score()
                 self.move_log.append(movement)
@@ -149,3 +154,4 @@ class State:
                     end_piece = self.board[end_row][end_col]
                     if end_piece[0] == enemy_color:
                         moves.append(Move(current_piece, (end_row, end_col), self.board))
+
