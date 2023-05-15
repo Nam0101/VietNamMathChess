@@ -1,6 +1,11 @@
 from tkinter import *
+from PIL import ImageTk, Image
 
 x = 3
+
+
+def show_view1():
+    view1.deiconify()
 
 
 def click_nguoi_nguoi():
@@ -28,15 +33,21 @@ def click_may_may():
 
 
 def click_huong_dan():
-    pass
+    from ui.huong_dan import show_huong_dan
+
+    show_huong_dan()
 
 
 def click_next():
-    view1.destroy()
+    view1.withdraw()
     if x == 1:
-        pass
+        from ui.view3 import show_view3
+
+        show_view3()
     else:
-        pass
+        from ui.view2 import show_view2
+
+        show_view2()
 
 
 view1 = Tk()
@@ -44,16 +55,23 @@ view1.title(" CỜ TOÁN VIỆT NAM")
 view1.geometry("600x600+400+50")
 view1.resizable(False, False)
 view1.iconbitmap("img/logo.ico")
-view1.configure(background="#769656")
+# view1.configure(background="#769656")
+img = Image.open("img/bg.png")
+# img = img.resize((600, 600), Image.ANTIALIAS)
+img = ImageTk.PhotoImage(img)
+panel = Label(view1, image=img)
+panel.image = img
+panel.place(x=0, y=0, relwidth=1, relheight=1)
+
 
 label_title = Label(
     view1,
     text="CỜ TOÁN VIỆT NAM",
-    bg="#769656",
-    fg="#8cfffb",
-    font=("monaco", 35, "bold"),
+    bg="#5a86fb",
+    fg="#ec1c24",
+    font=("arial", 35, "bold"),
 )
-label_title.place(x=100, y=50)
+label_title.place(x=80, y=50)
 
 button_nguoi_nguoi = Button(
     view1,
