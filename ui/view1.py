@@ -1,7 +1,13 @@
 from tkinter import *
 from PIL import ImageTk, Image
+import pygame as pg
+import sys
 
-x = 3
+path = "..//VietNamMathChess"
+sys.path.append(path)
+from game import game
+
+# x = 3
 
 
 def show_view1():
@@ -9,27 +15,37 @@ def show_view1():
 
 
 def click_nguoi_nguoi():
-    global x
-    x = 1
-    button_nguoi_nguoi.config(bg="#0812aa")
-    button_nguoi_may.config(bg="#595fae")
-    button_may_may.config(bg="#595fae")
+    # global x
+    # x = 1
+    # button_nguoi_nguoi.config(bg="#0812aa")
+    # button_nguoi_may.config(bg="#595fae")
+    # button_may_may.config(bg="#595fae")
+    view1.withdraw()
+    g = game.Game()
+    while g.running:
+        g.new()
+    pg.quit()
+    sys.exit()
 
 
-def click_nguoi_may():
-    global x
-    x = 2
-    button_nguoi_nguoi.config(bg="#595fae")
-    button_nguoi_may.config(bg="#0812aa")
-    button_may_may.config(bg="#595fae")
+def click_view2():
+    # global x
+    # x = 2
+    # button_nguoi_nguoi.config(bg="#595fae")
+    # button_nguoi_may.config(bg="#0812aa")
+    # button_may_may.config(bg="#595fae")
+    view1.withdraw()
+    from ui import view2
+
+    view2.show_view2()
 
 
-def click_may_may():
-    global x
-    x = 3
-    button_nguoi_nguoi.config(bg="#595fae")
-    button_nguoi_may.config(bg="#595fae")
-    button_may_may.config(bg="#0812aa")
+# def click_may_may():
+# global x
+# x = 3
+# button_nguoi_nguoi.config(bg="#595fae")
+# button_nguoi_may.config(bg="#595fae")
+# button_may_may.config(bg="#0812aa")
 
 
 def click_huong_dan():
@@ -38,16 +54,19 @@ def click_huong_dan():
     show_huong_dan()
 
 
-def click_next():
-    view1.withdraw()
-    if x == 1:
-        from ui.view3 import show_view3
+# def click_next():
+#     view1.withdraw()
+#     if x == 1:
+#         view1.withdraw()
+#         g = game.Game()
+#         while g.running:
+#             g.new()
+#         pg.quit()
+#         sys.exit()
+#     else:
+#         from ui.view2 import show_view2
 
-        show_view3()
-    else:
-        from ui.view2 import show_view2
-
-        show_view2()
+#         show_view2()
 
 
 view1 = Tk()
@@ -78,7 +97,7 @@ button_nguoi_nguoi = Button(
     text="CHƠI VỚI NGƯỜI",
     width=15,
     height=1,
-    bg="#595fae",
+    bg="#0812aa",
     fg="#ffffff",
     font=("arial", 20, "bold"),
     command=click_nguoi_nguoi,
@@ -90,10 +109,10 @@ button_nguoi_may = Button(
     text="CHƠI VỚI MÁY",
     width=15,
     height=1,
-    bg="#595fae",
+    bg="#0812aa",
     fg="#ffffff",
     font=("arial", 20, "bold"),
-    command=click_nguoi_may,
+    command=click_view2,
 )
 button_nguoi_may.place(x=170, y=250)
 
@@ -102,10 +121,10 @@ button_may_may = Button(
     text="MÁY VS MÁY",
     width=15,
     height=1,
-    bg="#595fae",
+    bg="#0812aa",
     fg="#ffffff",
     font=("arial", 20, "bold"),
-    command=click_may_may,
+    command=click_view2,
 )
 button_may_may.place(x=170, y=350)
 
@@ -119,18 +138,18 @@ button_huong_dan = Button(
     font=("arial", 18, "bold"),
     command=click_huong_dan,
 )
-button_huong_dan.place(x=90, y=480)
+button_huong_dan.place(x=225, y=480)
 
-button_next = Button(
-    view1,
-    text="TIẾP TỤC",
-    width=10,
-    height=1,
-    bg="#0ed145",
-    fg="#ffffff",
-    font=("arial", 18, "bold"),
-    command=click_next,
-)
-button_next.place(x=350, y=480)
+# button_next = Button(
+#     view1,
+#     text="TIẾP TỤC",
+#     width=10,
+#     height=1,
+#     bg="#0ed145",
+#     fg="#ffffff",
+#     font=("arial", 18, "bold"),
+#     command=click_next,
+# )
+# button_next.place(x=350, y=480)
 
 view1.mainloop()

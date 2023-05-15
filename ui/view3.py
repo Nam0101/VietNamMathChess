@@ -3,6 +3,8 @@ from PIL import ImageTk, Image
 import pygame as pg
 import sys
 
+do_sau = 1
+
 path = "..//VietNamMathChess"
 sys.path.append(path)
 from game import game
@@ -13,7 +15,9 @@ def show_view3():
 
 
 def click_play():
-    view3.destroy()
+    global do_sau
+    do_sau = scale.get()
+    view3.withdraw()
     g = game.Game()
     while g.running:
         g.new()
@@ -23,9 +27,9 @@ def click_play():
 
 def click_back():
     view3.withdraw()
-    from ui import view1
+    from ui import view2
 
-    view1.show_view1()
+    view2.show_view2()
 
 
 def update_scale():
@@ -58,7 +62,7 @@ label_title.place(x=140, y=100)
 scale = Scale(
     view3,
     from_=1,
-    to=10,
+    to=5,
     bg="#8cfffb",
     fg="#000000",
     orient=HORIZONTAL,
