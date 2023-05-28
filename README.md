@@ -1,6 +1,8 @@
 # VietNamMathChess
 
 VietNam Math Chess project
+
+
 **Hướng dẫn cài đặt**
 
 
@@ -21,4 +23,7 @@ Cài đặt các thư viện cần thiết
 pip install -r requirements.txt
 ```
 
-Khởi chạy file main.py
+Khởi chạy file main.py bằng lệnh: 
+```bash
+python main.py
+```
