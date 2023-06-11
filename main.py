@@ -1,8 +1,12 @@
 import sys
-import ui.view1 as view1
+
 import pygame as pg
+
 import game.game as game
-if __name__ == '__main__':
+
+if __name__ == "__main__":
+    from ui import view1
+
     view1.mainloop()
     g = game.Game()
 

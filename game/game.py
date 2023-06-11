@@ -1,10 +1,8 @@
-from os import path
-
 import pygame as pg
 
 import state.move as move
 import state.state as state
-import ai.stateEvaluation as stateEvaluation
+from ai import stateEvaluation
 
 WIDTH = 576
 HEIGHT = 704
@@ -29,7 +27,7 @@ class Game:
         self.selected_square = (INF, INF)
         self.previous_square = ()
         self.valid_moves = self.state.get_all_possible_move()
-        # self.evaluation = stateEvaluation.StateEvaluation(self.state)
+        self.evaluation = None
         self.player_clicks = []
         self.move_made = False
         self.highlight_color = [(255, 0, 0), (0, 0, 255)]
@@ -101,6 +99,7 @@ class Game:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_z:
                     self.state.undo_move()
+                    self.state.undo_move()
                     self.move_made = True
                 if event.key == pg.K_ESCAPE:
                     self.state.playing = False
@@ -108,11 +107,15 @@ class Game:
             if self.move_made:
                 self.valid_moves = self.state.get_all_possible_move()
                 self.move_made = False
-            if not self.human_turn:
+                self.draw_state()
+            if not self.human_turn and self.state.playing and not self.state.red_turn:
                 self.evaluation = stateEvaluation.StateEvaluation(self.state)
+                movement = self.evaluation.findMove(self.valid_moves)
+                if movement is None:
+                    self.state.playing = False
+                print("make move AI")
+                print(movement.start_row, movement.start_col, movement.end_row, movement.end_col)
                 print(self.state.board)
-                # movement = self.evaluation.minimax_move(3, True)
-                movement = self.evaluation.find_best_move()
                 self.state.make_move(movement, self.valid_moves)
                 self.move_made = True
 

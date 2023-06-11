@@ -1,5 +1,3 @@
-from random import randint
-
 from .move import Move
 
 COlUMN = 9
@@ -27,14 +25,10 @@ class State:
         self.red_score = 0
         self.blue_score = 0
         self.move_log = []
-        self.checkmate = False
 
     def update_board(self, movement):
         self.board[movement.start_row][movement.start_col] = "--"
         self.board[movement.end_row][movement.end_col] = movement.piece_moved
-
-    def is_playing(self):
-        return self.playing
 
     def make_move(self, movement, valid_moves):
         if self.red_turn and self.board[movement.start_row][movement.start_col][0] == "b":
@@ -47,8 +41,6 @@ class State:
             return
         for valid_move in valid_moves:
             if movement == valid_move:
-                if movement.piece_captured != "--":
-                    print('piece moved: ' + movement.piece_moved, 'piece captured: ' + movement.piece_captured)
                 self.update_board(movement)
                 self.calculate_score()
                 self.move_log.append(movement)
@@ -74,13 +66,13 @@ class State:
                     self.blue_score -= int(piece[1])
                 else:
                     self.red_score -= int(piece[1])
+        self.is_end()
 
     def is_end(self):
-        if self.red_score >= 30 or self.blue_score >= 30:
-            return True
+        if self.red_score >= 20 or self.blue_score >= 20:
+            self.playing = False
         if self.board[1][4] != 'b0' or self.board[9][4] != 'r0':
-            return True
-        return False
+            self.playing = False
 
     def get_all_possible_move(self):
         moves = []
@@ -154,4 +146,3 @@ class State:
                     end_piece = self.board[end_row][end_col]
                     if end_piece[0] == enemy_color:
                         moves.append(Move(current_piece, (end_row, end_col), self.board))
-
