@@ -54,6 +54,10 @@ class State:
             self.calculate_score()
             self.red_turn = not self.red_turn
 
+    def game_over(self):
+
+        return self.red_score >= 20 or self.blue_score >= 20 or self.board[1][4] != 'b0' or self.board[9][4] != 'r0'
+
     def calculate_score(self):
         self.red_score = 45
         self.blue_score = 45

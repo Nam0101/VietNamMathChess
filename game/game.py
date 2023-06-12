@@ -1,9 +1,10 @@
 import pygame as pg
 
+import ai
 import state.move as move
 import state.state as state
-from ai import stateEvaluation
-
+from ai import AI as AI, minimax as minimax
+from ai import greedy as greedy
 WIDTH = 576
 HEIGHT = 704
 TITLE = "Cờ Toán Việt Nam"
@@ -16,10 +17,15 @@ SQUARE_SIZE = HEIGHT // ROW
 INF = 1000000000
 color = [(238, 238, 210), (118, 150, 86)]
 
+ALGORITHM = {
+    0: "Minimax",
+    1: "Greedy"
+}
 
 class Game:
 
     def __init__(self):
+        self.evaluation = None
         self.state = state.State()
         # initialize game window,
         self.canvas = None
@@ -27,9 +33,10 @@ class Game:
         self.selected_square = (INF, INF)
         self.previous_square = ()
         self.valid_moves = self.state.get_all_possible_move()
-        self.evaluation = None
         self.player_clicks = []
         self.move_made = False
+        self.ai_blue = None
+        self.ai_red = None
         self.highlight_color = [(255, 0, 0), (0, 0, 255)]
         pg.init()
         pg.mixer.init()
@@ -49,6 +56,15 @@ class Game:
             self.piece_img[self.piece[i]] = pg.image.load("img/" + self.piece[i] + ".png").convert_alpha()
             self.piece_img[self.piece[i]] = pg.transform.scale(self.piece_img[self.piece[i]],
                                                                (SQUARE_SIZE, SQUARE_SIZE))
+        self.setting(0, 0, False, False)
+
+    def setting(self, dept, algo, player_one, player_two):
+        # setting game, dept is dept of game tree, algo is algorithm to use, player_one is true if human play red,
+        # false if AI play red, same as player_two
+        self.player_one = player_one
+        self.player_two = player_two
+
+        self.new()
 
     def new(self):
         # start a new game
@@ -109,12 +125,20 @@ class Game:
                 self.move_made = False
                 self.draw_state()
             if not self.human_turn and self.state.playing and not self.state.red_turn:
-                self.evaluation = stateEvaluation.StateEvaluation(self.state)
-                movement = self.evaluation.findMove(self.valid_moves)
+                self.ai_blue = greedy.greedy(self.state)
+                movement = self.ai_blue.findMove(self.valid_moves)
                 if movement is None:
                     self.state.playing = False
                 print("make move AI")
-                print(movement.start_row, movement.start_col, movement.end_row, movement.end_col)
+                print(self.state.board)
+                self.state.make_move(movement, self.valid_moves)
+                self.move_made = True
+            if not self.human_turn and self.state.playing and  self.state.red_turn:
+                self.ai_red = minimax.minnimax(self.state)
+                movement = self.ai_red.findMove(self.valid_moves)
+                if movement is None:
+                    self.state.playing = False
+                print("make move AI")
                 print(self.state.board)
                 self.state.make_move(movement, self.valid_moves)
                 self.move_made = True
