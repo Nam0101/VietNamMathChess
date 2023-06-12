@@ -16,6 +16,7 @@ class Move:
         self.piece_moved = board[self.start_row][self.start_col]
         self.piece_captured = board[self.end_row][self.end_col]
         self.move_ID = self.start_row * 1000 + self.start_col * 100 + self.end_row * 10 + self.end_col
+        self.is_attack = self.evaluate_attack()
 
     def getChessNotation(self):
         return self.getRankFile(self.start_row, self.start_col) + self.getRankFile(self.end_row, self.end_col)
@@ -23,7 +24,19 @@ class Move:
     def getRankFile(self, r, c):
         return self.cols_to_files[c] + self.rows_to_ranks[r]
 
+    def evaluate_attack(self):
+        if self.piece_captured != "--":
+            return True
+        else:
+            return False
+
     # override equals method
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.move_ID == other.move_ID
+
+    def to_string(self):
+        s = "Move " + self.piece_moved + " from " + self.getRankFile(self.start_row,
+                                                                     self.start_col) + " to " + self.getRankFile(
+            self.end_row, self.end_col)
+        return s
