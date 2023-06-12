@@ -2,51 +2,84 @@ import random
 
 from ai.AI import AI
 
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import as_completed
+import time
 
-class minnimax(AI):
-    def __int__(self):
+
+def evaluate_move(move, red_play):
+    multi = 1 if red_play else -1
+    if move.piece_moved[0] == "r":
+        if move.piece_moved[1] == "0":
+            return multi * 100
+        else:
+            return multi * int(move.piece_moved[1])
+    elif move.piece_moved[0] == "b":
+        if move.piece_moved[1] == "0":
+            return multi * -100
+        else:
+            return -multi * int(move.piece_moved[1])
+    else:
+        return 0
+
+
+class minimax(AI):
+    def __init__(self, depth):
         super().__init__()
+        self.DEPTH = depth
+        self.next_move = None
 
-    def evaluation(self):
-        evaluation = super().evaluation()
+    def evaluation(self, state):
+        evaluation = super().evaluation(state)
         return evaluation
 
-    def minimax(self, depth, state, alpha, beta, maximizingPlayer):
+    def minimax_move(self, depth, state, alpha, beta, maximizingPlayer):
         if depth == 0 or state.game_over():
-            return self.evaluation()
+            # print("Current score: ", self.evaluation(state.board))
+            return self.evaluation(state)
         if maximizingPlayer:
-            maxEval = -self.checkmate
-            for move in state.get_all_possible_move():
-                state.make_move(move, state.get_all_possible_move())
-                eval = self.minimax(depth - 1, state, alpha, beta, False)
+            max_score = -self.checkmate
+            valid_moves = state.get_all_possible_move()
+            sorted_moves = sorted(valid_moves, key=lambda moves: evaluate_move(moves, state.red_turn),
+                                  reverse=maximizingPlayer)
+            for move in sorted_moves:
+                state.make_move(move)
+                eval_score = self.minimax_move(depth - 1, state, alpha, beta, False)
                 state.undo_move()
-                maxEval = max(maxEval, eval)
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
-            return maxEval
+                if eval_score > max_score:
+                    max_score = eval_score
+                    if depth == self.DEPTH:
+                        self.next_move = move
+                    alpha = max(alpha, eval_score)
+                    if beta <= alpha:
+                        break
+            return max_score
         else:
-            minEval = self.checkmate
-            for move in state.get_all_possible_move():
-                state.make_move(move, state.get_all_possible_move())
-                eval = self.minimax(depth - 1, state, alpha, beta, True)
+            min_score = self.checkmate
+            valid_moves = state.get_all_possible_move()
+            sorted_moves = sorted(valid_moves, key=lambda moves: evaluate_move(moves, state.red_turn),
+                                  reverse=maximizingPlayer)
+            for move in sorted_moves:
+                state.make_move(move)
+                eval_score = self.minimax_move(depth - 1, state, alpha, beta, True)
                 state.undo_move()
-                minEval = min(minEval, eval)
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break
-            return minEval
+                if eval_score < min_score:
+                    min_score = eval_score
+                    if depth == self.DEPTH:
+                        self.next_move = move
+                    beta = min(beta, eval_score)
+                    if beta <= alpha:
+                        break
+            return min_score
 
-    def findMove(self, valid_moves):
-        turn_multiplier = 1 if self.Statement.red_turn else -1
-        max_score = -self.checkmate
-        best_move = None
+    def findMove(self, state, valid_moves):
+        alpha = -self.checkmate
+        beta = self.checkmate
         random.shuffle(valid_moves)
-        for player_move in valid_moves:
-            self.Statement.make_move(player_move, valid_moves)
-            score = turn_multiplier * self.minimax(1, self.Statement, -self.checkmate, self.checkmate, True)
-            if score > max_score:
-                max_score = score
-                best_move = player_move
-            self.Statement.undo_move()
-        return best_move
+        print("Finding moves with minimax, depth = ", self.DEPTH, "...")
+        start_time = time.time()
+        score=self.minimax_move(self.DEPTH, state, alpha, beta, state.red_turn)
+        end_time = time.time()
+        print("Time used:", end_time - start_time)
+        print("Score:", score)
+        return self.next_move

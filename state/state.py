@@ -26,25 +26,12 @@ class State:
         self.blue_score = 0
         self.move_log = []
 
-    def update_board(self, movement):
+    def make_move(self, movement):
         self.board[movement.start_row][movement.start_col] = "--"
         self.board[movement.end_row][movement.end_col] = movement.piece_moved
-
-    def make_move(self, movement, valid_moves):
-        if self.red_turn and self.board[movement.start_row][movement.start_col][0] == "b":
-            return
-        if not self.red_turn and self.board[movement.start_row][movement.start_col][0] == "r":
-            return
-        if self.board[movement.end_row][movement.end_col][0] == self.board[movement.start_row][movement.start_col][0]:
-            return
-        if self.board[movement.start_row][movement.start_col] == "--":
-            return
-        for valid_move in valid_moves:
-            if movement == valid_move:
-                self.update_board(movement)
-                self.calculate_score()
-                self.move_log.append(movement)
-                self.red_turn = not self.red_turn
+        self.calculate_score()
+        self.move_log.append(movement)
+        self.red_turn = not self.red_turn
 
     def undo_move(self):
         if self.move_log.__len__() != 0:
@@ -55,7 +42,6 @@ class State:
             self.red_turn = not self.red_turn
 
     def game_over(self):
-
         return self.red_score >= 20 or self.blue_score >= 20 or self.board[1][4] != 'b0' or self.board[9][4] != 'r0'
 
     def calculate_score(self):
@@ -70,13 +56,15 @@ class State:
                     self.blue_score -= int(piece[1])
                 else:
                     self.red_score -= int(piece[1])
-        self.is_end()
+        self.game_over()
 
-    def is_end(self):
-        if self.red_score >= 20 or self.blue_score >= 20:
-            self.playing = False
-        if self.board[1][4] != 'b0' or self.board[9][4] != 'r0':
-            self.playing = False
+    def get_all_attack_move(self):
+        move = self.get_all_possible_move()
+        attack_move = []
+        for i in move:
+            if i.is_attack:
+                attack_move.append(i)
+        return attack_move
 
     def get_all_possible_move(self):
         moves = []
