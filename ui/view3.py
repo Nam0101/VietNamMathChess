@@ -1,7 +1,7 @@
-from tkinter import *
-from PIL import ImageTk, Image
-import pygame as pg
 import sys
+from tkinter import *
+
+import pygame as pg
 
 path = "..//VietNamMathChess"
 sys.path.append(path)
@@ -88,7 +88,6 @@ label_scale2 = Label(
 )
 label_scale2.place(x=330, y=300)
 update_scale()
-
 
 button_back = Button(
     view3,

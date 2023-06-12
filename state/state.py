@@ -30,9 +30,6 @@ class State:
         self.board[movement.start_row][movement.start_col] = "--"
         self.board[movement.end_row][movement.end_col] = movement.piece_moved
 
-    def is_playing(self):
-        return self.playing
-
     def make_move(self, movement, valid_moves):
         if self.red_turn and self.board[movement.start_row][movement.start_col][0] == "b":
             return
@@ -57,6 +54,10 @@ class State:
             self.calculate_score()
             self.red_turn = not self.red_turn
 
+    def game_over(self):
+
+        return self.red_score >= 20 or self.blue_score >= 20 or self.board[1][4] != 'b0' or self.board[9][4] != 'r0'
+
     def calculate_score(self):
         self.red_score = 45
         self.blue_score = 45
@@ -69,13 +70,13 @@ class State:
                     self.blue_score -= int(piece[1])
                 else:
                     self.red_score -= int(piece[1])
+        self.is_end()
 
     def is_end(self):
-        if self.red_score >= 30 or self.blue_score >= 30:
-            return True
+        if self.red_score >= 20 or self.blue_score >= 20:
+            self.playing = False
         if self.board[1][4] != 'b0' or self.board[9][4] != 'r0':
-            return True
-        return False
+            self.playing = False
 
     def get_all_possible_move(self):
         moves = []
