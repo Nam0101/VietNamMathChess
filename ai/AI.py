@@ -1,14 +1,14 @@
-piece_score = {'0': 100, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 8, '7': 10, '8': 15, '9': 20}
+import numpy as np
+from numba import jit
 
-COLUMN = 9
-ROW = 11
-
-ranks_to_rows = {"1": 10, "2": 9, "3": 8, "4": 7, "5": 6, "6": 5,
-                 "7": 4, "8": 3, "9": 2, "10": 1, "11": 0}
-rows_to_ranks = {v: k for k, v in ranks_to_rows.items()}
-files_to_cols = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4,
-                 "f": 5, "g": 6, "h": 7, "i": 8}
-cols_to_files = {v: k for k, v in files_to_cols.items()}
+from ai.variable import square_values
+from ai.variable import piece_score
+from ai.variable import COLUMN
+from ai.variable import ROW
+from ai.variable import ranks_to_rows
+from ai.variable import files_to_cols
+from ai.variable import rows_to_ranks
+from ai.variable import cols_to_files
 
 
 def getRankFile(r, c):
@@ -17,25 +17,6 @@ def getRankFile(r, c):
 
 def getChessNotation(start_row, start_col, end_row, end_col):
     return getRankFile(start_row, start_col) + getRankFile(end_row, end_col)
-
-
-def evaluation_piece_near_king(board, red_turn):
-    square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
-                     "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 0.5, "f5": 1}
-    score = 0
-    for row in range(ROW):
-        for col in range(COLUMN):
-            if red_turn:
-                if board[row][col][0] == "r":
-                    square = getRankFile(row, col)
-                    if square in square_values:
-                        score += square_values[square]
-            else:
-                if board[row][col][0] == "b":
-                    square = getRankFile(row, col)
-                    if square in square_values:
-                        score += square_values[square]
-    return score
 
 
 def in_check(state):
@@ -67,34 +48,39 @@ class AI:
     def __init__(self):
         self.DEPTH = None
         self.next_move = None
-        self.checkmate = 60
+        self.checkmate = 100
         self.stalemate = 0
 
     def evaluation(self, state):
+        square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
+                         "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 1, "f5": 1}
         score = 0
-        for row in state.board:
-            for square in row:
-                if square[0] == "r":
-                    if int(square[1]) == 0:
+        red_score = 0
+        blue_score = 0
+        for row in range(ROW):
+            for col in range(COLUMN):
+                piece = state.board[row, col]
+                if piece[0] == "r":
+                    if state.red_turn:
+                        square = getRankFile(row, col)
+                        red_score += square_values.get(square, 0)
+                    if int(piece[1]) == 0:
                         score += self.checkmate
                     else:
-                        score += piece_score[square[1]]
-                elif square[0] == "b":
-                    if int(square[1]) == 0:
+                        score += piece_score[piece[1]]
+                elif piece[0] == "b":
+                    if not state.red_turn:
+                        square = getRankFile(row, col)
+                        blue_score += square_values.get(square, 0)
+                    if int(piece[1]) == 0:
                         score -= self.checkmate
                     else:
-                        score -= piece_score[square[1]]
-        # check= in_check(state)
-        # if check:
-        #     if state.red_turn:
-        #         score -= self.checkmate
-        #     else:
-        #         score += self.checkmate
-        return score + 0.5 * evaluation_piece_near_king(state.board, True) - 0.5 * evaluation_piece_near_king(
-            state.board, False)
+                        score -= piece_score[piece[1]]
+
+        return score + 0.5 * red_score - 0.5 * blue_score
 
     def AI_move(self):
-        pass
+        raise NotImplementedError
 
     def findMove(self, statement, valid_moves):
-        pass
+        raise NotImplementedError
