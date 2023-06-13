@@ -1,4 +1,6 @@
 from .move import Move
+from numba import *
+import numpy as np
 
 COlUMN = 9
 ROW = 11
@@ -8,17 +10,17 @@ move_direction = [[-1, 0], [0, 1], [1, 0], [0, -1], [-1, 1], [1, 1], [1, -1], [-
 
 class State:
     def __init__(self):
-        self.board = [["b9", "b8", "b7", "b6", "b5", "b4", "b3", "b2", "b1"],
-                      ["--", "--", "--", "--", "b0", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                      ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
-                      ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"]]
+        self.board = np.array([["b9", "b8", "b7", "b6", "b5", "b4", "b3", "b2", "b1"],
+                               ["--", "--", "--", "--", "b0", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                               ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
+                               ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"]])
         self.playing = False
         self.have_ai = False
         self.red_turn = True
@@ -58,6 +60,7 @@ class State:
                     self.red_score -= int(piece[1])
         self.game_over()
 
+    @jit(parallel=True, fastmath=True, forceobj=True)
     def get_all_attack_move(self):
         move = self.get_all_possible_move()
         attack_move = []
@@ -105,6 +108,9 @@ class State:
                     multi_attack = piece_step * team_piece
                     division_attack = piece_step // team_piece
                     remain_attack = piece_step % team_piece
+                    if piece_step < team_piece:
+                        division_attack = 0
+                        remain_attack = 0
                     attack_step = [add_attack, sub_attack, multi_attack, division_attack, remain_attack]
                     self.get_attack_move(attack_step, (row, col), (i, j), moves)
 
@@ -138,3 +144,15 @@ class State:
                     end_piece = self.board[end_row][end_col]
                     if end_piece[0] == enemy_color:
                         moves.append(Move(current_piece, (end_row, end_col), self.board))
+
+    def to_string(self):
+        s = self.board.__str__()
+        s += "turn: " + self.red_turn.__str__() + "\n"
+        return s
+    def to_dict(self):
+        return {
+            "board": self.board.tostring(),
+            "turn": self.red_turn,
+            "red_score": self.red_score,
+            "blue_score": self.blue_score
+        }

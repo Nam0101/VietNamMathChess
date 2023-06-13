@@ -1,4 +1,6 @@
-piece_score = {'0': 100, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 8, '7': 10, '8': 15, '9': 20}
+from numba import jit
+
+piece_score = {'0': 100, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}
 
 COLUMN = 9
 ROW = 11
@@ -21,7 +23,7 @@ def getChessNotation(start_row, start_col, end_row, end_col):
 
 def evaluation_piece_near_king(board, red_turn):
     square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
-                     "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 0.5, "f5": 1}
+                     "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 1, "f5": 1}
     score = 0
     for row in range(ROW):
         for col in range(COLUMN):
@@ -67,7 +69,7 @@ class AI:
     def __init__(self):
         self.DEPTH = None
         self.next_move = None
-        self.checkmate = 60
+        self.checkmate = 30
         self.stalemate = 0
 
     def evaluation(self, state):

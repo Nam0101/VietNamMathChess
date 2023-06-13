@@ -1,9 +1,12 @@
-import pygame as pg
+import time
 
+import pygame as pg
+import time
 import state.move as move
 import state.state as state
 from ai import greedy as greedy, minimax
-
+from numba import jit, njit
+import numpy as np
 delay = 1
 WIDTH = 576
 HEIGHT = 704
@@ -26,7 +29,6 @@ ALGORITHM = {
 class Game:
 
     def __init__(self):
-        self.evaluation = None
         self.state = state.State()
         # initialize game window,
         self.canvas = None
@@ -37,7 +39,7 @@ class Game:
         self.player_clicks = []
         self.move_made = False
         self.ai_blue = minimax.minimax(3)
-        self.ai_red = greedy.greedy()
+        self.ai_red = minimax.minimax(2)
         self.highlight_color = [(255, 0, 0), (0, 0, 255)]
         pg.init()
         pg.mixer.init()
@@ -57,14 +59,13 @@ class Game:
             self.piece_img[self.piece[i]] = pg.image.load("img/" + self.piece[i] + ".png").convert_alpha()
             self.piece_img[self.piece[i]] = pg.transform.scale(self.piece_img[self.piece[i]],
                                                                (SQUARE_SIZE, SQUARE_SIZE))
-        self.setting(0, 0, True, False)
+        self.setting(0, 0, True,False)
 
     def setting(self, dept, algo, player_one, player_two):
         # setting game, dept is dept of game tree, algo is algorithm to use, player_one is true if human play red,
         # false if AI play red, same as player_two
         self.player_one = player_one
         self.player_two = player_two
-
         self.new()
 
     def new(self):
@@ -120,6 +121,7 @@ class Game:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_z:
                     self.state.undo_move()
+                    self.state.undo_move()
                     self.move_made = True
                 if event.key == pg.K_ESCAPE:
                     self.state.playing = False
@@ -128,16 +130,23 @@ class Game:
                 self.valid_moves = self.state.get_all_possible_move()
                 self.move_made = False
                 self.draw_state()
+                if self.state.game_over():
+                    self.state.playing = False
+                    print("Game over")
+                    self.running = False
             if not self.human_turn and self.state.playing and not self.state.red_turn:
                 ai_move = self.ai_blue.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
+                time.sleep(1)
+                self.draw_state()
                 self.move_made = True
                 print("AI made move", ai_move.to_string())
                 self.human_turn = self.state.red_turn and self.player_one or not self.state.red_turn and self.player_two
-
             if not self.human_turn and self.state.playing and self.state.red_turn:
                 ai_move = self.ai_red.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
+                time.sleep(1)
+                self.draw_state()
                 self.move_made = True
                 self.human_turn = self.state.red_turn and self.player_one or not self.state.red_turn and self.player_two
 

@@ -1,6 +1,7 @@
 import random
 
 from ai.AI import AI
+from ai.minimax import evaluate_move
 
 current_state = None
 
@@ -17,8 +18,10 @@ class greedy(AI):
         turn_multiplier = 1 if statement.red_turn else -1
         max_score = -self.checkmate
         best_move = None
-        random.shuffle(valid_moves)
-        for player_move in valid_moves:
+        valid_moves = statement.get_all_possible_move()
+        sorted_moves = sorted(valid_moves, key=lambda moves: evaluate_move(moves, statement.red_turn),
+                              reverse=statement.red_turn)
+        for player_move in sorted_moves:
             statement.make_move(player_move)
             score = turn_multiplier * self.evaluation(statement)
             if score > max_score:

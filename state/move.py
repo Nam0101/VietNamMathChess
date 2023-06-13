@@ -24,6 +24,7 @@ class Move:
     def getRankFile(self, r, c):
         return self.cols_to_files[c] + self.rows_to_ranks[r]
 
+
     def evaluate_attack(self):
         if self.piece_captured != "--":
             return True
@@ -40,3 +41,9 @@ class Move:
                                                                      self.start_col) + " to " + self.getRankFile(
             self.end_row, self.end_col)
         return s
+
+    def in_check(self):
+        if self.piece_moved[0] == "r":
+            return self.end_row == 1 and self.end_col == 4
+        else:
+            return self.end_row == 9 and self.end_col == 4

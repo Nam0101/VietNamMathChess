@@ -58,7 +58,7 @@ label_title.place(x=140, y=100)
 scale = Scale(
     view3,
     from_=1,
-    to=10,
+    to=5,
     bg="#8cfffb",
     fg="#000000",
     orient=HORIZONTAL,
