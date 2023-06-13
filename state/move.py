@@ -1,3 +1,7 @@
+from numba import int64, boolean
+from numba.experimental import jitclass
+
+import numpy as np
 class Move:
     # map key to value
     # key : value
@@ -7,7 +11,6 @@ class Move:
     files_to_cols = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4,
                      "f": 5, "g": 6, "h": 7, "i": 8}
     cols_to_files = {v: k for k, v in files_to_cols.items()}
-
     def __init__(self, start_square, end_square, board):
         self.start_row = start_square[0]
         self.start_col = start_square[1]
@@ -23,7 +26,6 @@ class Move:
 
     def getRankFile(self, r, c):
         return self.cols_to_files[c] + self.rows_to_ranks[r]
-
 
     def evaluate_attack(self):
         if self.piece_captured != "--":
@@ -47,3 +49,13 @@ class Move:
             return self.end_row == 1 and self.end_col == 4
         else:
             return self.end_row == 9 and self.end_col == 4
+
+    def is_defend_move(self, state, checking):
+        if checking:
+            state.make_move(self)
+            if state.is_check():
+                return False
+            else:
+                return True
+        else:
+            return False

@@ -1,5 +1,7 @@
+from numba import int64
+from numba.experimental import jitclass
+
 from .move import Move
-from numba import *
 import numpy as np
 
 COlUMN = 9
@@ -60,7 +62,6 @@ class State:
                     self.red_score -= int(piece[1])
         self.game_over()
 
-    @jit(parallel=True, fastmath=True, forceobj=True)
     def get_all_attack_move(self):
         move = self.get_all_possible_move()
         attack_move = []
@@ -149,10 +150,11 @@ class State:
         s = self.board.__str__()
         s += "turn: " + self.red_turn.__str__() + "\n"
         return s
-    def to_dict(self):
-        return {
-            "board": self.board.tostring(),
-            "turn": self.red_turn,
-            "red_score": self.red_score,
-            "blue_score": self.blue_score
-        }
+
+    def is_check(self):
+        king_row = 1 if self.red_turn else 9
+        king_col = 4
+        for move in self.valid_moves:
+            if move.end_row == king_row and move.end_col == king_col:
+                return True
+        return False
