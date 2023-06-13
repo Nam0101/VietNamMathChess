@@ -13,9 +13,7 @@ from ai.AI import getRankFile
 from ai.AI import getChessNotation
 import time
 import copy
-
-square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
-                 "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 1, "f5": 1}
+from ai.variable import square_values
 
 
 def evaluate_move(move, state):
@@ -54,15 +52,17 @@ class minimax(AI):
     def evaluation(self, state):
         evaluation = super().evaluation(state)
         return evaluation
+
     def minimax_move(self, depth, state, alpha, beta, maximizingPlayer, start_time):
         self.state_visited += 1
-        if depth == 0 or state.game_over():
+        if depth == 0 or state.game_over() or time.time() - start_time > 10:
             return self.evaluation(state)
         if maximizingPlayer:
             max_score = -self.checkmate
             valid_moves = state.get_all_possible_move()
-            sorted_moves = sorted(valid_moves, key=lambda moves: evaluate_move(moves, state),
-                                  reverse=maximizingPlayer)
+            sorted_moves = (player_move for player_move in
+                            sorted(valid_moves, key=lambda moves: evaluate_move(moves, state),
+                                   reverse=state.red_turn))
             for move in sorted_moves:
                 state.make_move(move)
                 eval_score = self.minimax_move(depth - 1, state, alpha, beta, False, start_time)
@@ -78,8 +78,9 @@ class minimax(AI):
         else:
             min_score = self.checkmate
             valid_moves = state.get_all_possible_move()
-            sorted_moves = sorted(valid_moves, key=lambda moves: evaluate_move(moves, state),
-                                  reverse=maximizingPlayer)
+            sorted_moves = (player_move for player_move in
+                            sorted(valid_moves, key=lambda moves: evaluate_move(moves, state),
+                                   reverse=state.red_turn))
             for move in sorted_moves:
                 state.make_move(move)
                 eval_score = self.minimax_move(depth - 1, state, alpha, beta, True, start_time)

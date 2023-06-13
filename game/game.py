@@ -31,7 +31,6 @@ class Game:
     def __init__(self):
         self.state = state.State()
         # initialize game window,
-        self.canvas = None
         self.all_sprites = None
         self.selected_square = (INF, INF)
         self.previous_square = ()
@@ -137,7 +136,6 @@ class Game:
             if not self.human_turn and self.state.playing and not self.state.red_turn:
                 ai_move = self.ai_blue.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
-                time.sleep(1)
                 self.draw_state()
                 self.move_made = True
                 print("AI made move", ai_move.to_string())
@@ -145,7 +143,6 @@ class Game:
             if not self.human_turn and self.state.playing and self.state.red_turn:
                 ai_move = self.ai_red.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
-                time.sleep(1)
                 self.draw_state()
                 self.move_made = True
                 self.human_turn = self.state.red_turn and self.player_one or not self.state.red_turn and self.player_two
@@ -183,7 +180,7 @@ class Game:
                 pg.draw.rect(self.screen, self.highlight_color[0 if self.state.red_turn else 1],
                              (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 4)
                 self.previous_square = (row, col)
-                for movement in self.valid_moves:
+                for movement in (m for m in self.valid_moves):
                     if movement.start_row == row and movement.start_col == col:
                         pg.draw.rect(self.screen, self.highlight_color[0 if self.state.red_turn else 1],
                                      (movement.end_col * SQUARE_SIZE, movement.end_row * SQUARE_SIZE,
