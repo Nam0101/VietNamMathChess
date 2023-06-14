@@ -48,6 +48,7 @@ class minimax(AI):
         self.DEPTH = depth
         self.next_move = None
         self.state_visited = 0
+        self.MAX_TIME = 10
 
     def evaluation(self, state):
         evaluation = super().evaluation(state)
@@ -94,6 +95,23 @@ class minimax(AI):
                         break
             return min_score
 
+    # def findMove(self, state, valid_moves):
+    #     alpha = -self.checkmate
+    #     beta = self.checkmate
+    #     print("Finding moves with iterative deepening...")
+    #     start_time = time.time()
+    #     current_state = copy.deepcopy(state)
+    #     depth = 1
+    #     while time.time() - start_time < self.MAX_TIME:
+    #         score = self.minimax_move(depth, current_state, alpha, beta, state.red_turn, start_time)
+    #         depth += 1
+    #     end_time = time.time()
+    #     print("Time used:", end_time - start_time)
+    #     print("Depth reached:", depth - 1)
+    #     print("Score:", score)
+    #     print("State visited:", self.state_visited)
+    #     self.state_visited = 0
+    #     return self.next_move
     def findMove(self, state, valid_moves):
         alpha = -self.checkmate
         beta = self.checkmate

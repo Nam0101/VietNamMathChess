@@ -11,6 +11,7 @@ from ai.variable import files_to_cols
 from ai.variable import rows_to_ranks
 from ai.variable import cols_to_files
 
+
 class Move:
     # map key to value
     # key : value
@@ -22,7 +23,7 @@ class Move:
         self.end_col = end_square[1]
         self.piece_moved = board[self.start_row, self.start_col]
         self.piece_captured = board[self.end_row, self.end_col]
-        self.move_ID = self.start_row * 1000 + self.start_col * 100 + self.end_row * 10 + self.end_col
+        self.move_ID = (self.start_row, self.start_col, self.end_row, self.end_col)
         self.is_attack = self.evaluate_attack()
 
     def getChessNotation(self):

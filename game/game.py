@@ -37,9 +37,9 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(3)
+        self.ai_blue = minimax.minimax(2)
         self.ai_red = minimax.minimax(2)
-        self.highlight_color = [(255, 0, 0), (0, 0, 255)]
+        self.highlight_color = [(254, 0, 0), (0, 0, 254)]
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -74,8 +74,7 @@ class Game:
 
     def run(self):
         # Game Loop
-        self.state.playing = True
-        while self.state.playing:
+        while self.running:
             self.clock.tick(FPS)
             self.update()
             self.events()
@@ -91,8 +90,6 @@ class Game:
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
-                if self.state.playing:
-                    self.state.playing = False
                 self.running = False
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if self.human_turn:
@@ -123,24 +120,22 @@ class Game:
                     self.state.undo_move()
                     self.move_made = True
                 if event.key == pg.K_ESCAPE:
-                    self.state.playing = False
                     self.running = False
             if self.move_made:
                 self.valid_moves = self.state.get_all_possible_move()
                 self.move_made = False
                 self.draw_state()
                 if self.state.game_over():
-                    self.state.playing = False
                     print("Game over")
                     self.running = False
-            if not self.human_turn and self.state.playing and not self.state.red_turn:
+            if not self.human_turn and self.running and not self.state.red_turn:
                 ai_move = self.ai_blue.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
                 self.draw_state()
                 self.move_made = True
                 print("AI made move", ai_move.to_string())
                 self.human_turn = self.state.red_turn and self.player_one or not self.state.red_turn and self.player_two
-            if not self.human_turn and self.state.playing and self.state.red_turn:
+            if not self.human_turn and self.running and self.state.red_turn:
                 ai_move = self.ai_red.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
                 self.draw_state()
@@ -169,7 +164,6 @@ class Game:
     def show_go_screen(self):
         if self.state.game_over():
             print("game over")
-            self.state.playing = False
             self.running = False
         pass
 
