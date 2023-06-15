@@ -49,18 +49,21 @@ class Move:
             self.end_row, self.end_col)
         return s
 
-    def in_check(self):
-        if self.piece_moved[0] == "r":
-            return self.end_row == 1 and self.end_col == 4
-        else:
-            return self.end_row == 9 and self.end_col == 4
+    def checking_move(self, state):
+        state.make_move(self)
+        if state.board[1, 4] != "b0" or state.board[9, 4] != "r0":
+            return True
+        state.undo_move()
+        return False
 
     def is_defend_move(self, state, checking):
         if checking:
             state.make_move(self)
             if state.is_check():
+                state.undo_move()
                 return False
             else:
+                state.undo_move()
                 return True
         else:
             return False

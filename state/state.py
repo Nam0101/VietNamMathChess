@@ -157,10 +157,11 @@ class State:
     def is_check(self):
         king_row = 1 if self.red_turn else 9
         king_col = 4
-        for move in self.get_all_attack_move():
+        for move in self.get_all_possible_move():
             if move.end_row == king_row and move.end_col == king_col:
                 return True
         return False
+
 
 
 

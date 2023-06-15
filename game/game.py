@@ -37,7 +37,7 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(2)
+        self.ai_blue = minimax.minimax(3)
         self.ai_red = minimax.minimax(2)
         self.highlight_color = [(254, 0, 0), (0, 0, 254)]
         pg.init()
