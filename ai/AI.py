@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from numba import jit
 
@@ -9,6 +11,7 @@ from ai.variable import ranks_to_rows
 from ai.variable import files_to_cols
 from ai.variable import rows_to_ranks
 from ai.variable import cols_to_files
+from state.state import State
 
 
 def getRankFile(r, c):
@@ -76,7 +79,11 @@ class AI:
                         score -= self.checkmate
                     else:
                         score -= piece_score[piece[1]]
-
+        # red_possible_moves = len(state.get_all_possible_move())
+        # state.red_turn = not state.red_turn
+        # blue_possible_moves = len(state.get_all_possible_move())
+        # state.red_turn = not state.red_turn
+        # possible_move = red_possible_moves - blue_possible_moves if state.red_turn else blue_possible_moves - red_possible_moves
         return score + 0.5 * red_score - 0.5 * blue_score
 
     def AI_move(self):
@@ -84,3 +91,5 @@ class AI:
 
     def findMove(self, statement, valid_moves):
         raise NotImplementedError
+
+

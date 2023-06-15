@@ -14,32 +14,60 @@ from ai.AI import getChessNotation
 import time
 import copy
 from ai.variable import square_values
+import numpy as np
 
+
+class Zobrist_hash:
+    def __init__(self):
+        self.NUM_PIECES = 20
+        self.ROWS = 11
+        self.COLS = 9
+        self.zobrist_keys = np.zeros((self.ROWS, self.COLS, self.NUM_PIECES), dtype=np.uint64)
+        self.initKeys()
+
+    def initKeys(self):
+        for row in range(self.ROWS):
+            for col in range(self.COLS):
+                for piece in range(self.NUM_PIECES):
+                    self.zobrist_keys[row, col, piece] = random.getrandbits(64)
+
+    def calculate_zobrist_hash(self, board):
+        hash_value = np.uint64(0)
+        for row in range(ROW):
+            for col in range(COLUMN):
+                piece = board[row, col]
+                if piece != "--":
+                    piece_index = int(piece[1])
+                    if piece[0] == "r":
+                        piece_index += 10
+                    hash_value ^= self.zobrist_keys[row, col, piece_index]
+        return hash_value
 
 def evaluate_move(move, state):
     multi = 1 if state.red_turn else -1
     score = 0
-    checking = move.in_check()
-    state_copy = copy.deepcopy(state)
-    defending = move.is_defend_move(state_copy, checking)
-    if defending:
-        score += multi * 100
-    if checking:
-        score += multi * 100
+
+    # Kiểm tra xem quân đã bị ăn hay chưa
     if move.piece_captured[0] == "r":
+        # Quân đỏ bị ăn
         if move.piece_captured[1] == "0":
             score += multi * 100
         else:
             score += multi * int(move.piece_captured[1])
     elif move.piece_captured[0] == "b":
+        # Quân đen bị ăn
         if move.piece_captured[1] == "0":
             score += multi * -100
         else:
             score += -multi * int(move.piece_captured[1])
-    square = getRankFile(move.end_row, move.end_col)
+
+    # Kiểm tra giá trị của ô đích nước đi
+    square = getChessNotation(move.end_row, move.end_col)
     if square in square_values:
         score += square_values[square]
+
     return score
+
 
 
 class minimax(AI):
@@ -49,6 +77,8 @@ class minimax(AI):
         self.next_move = None
         self.state_visited = 0
         self.MAX_TIME = 10
+        self.transposition_table = {}
+        self.zh = Zobrist_hash()
 
     def evaluation(self, state):
         evaluation = super().evaluation(state)
@@ -57,7 +87,13 @@ class minimax(AI):
     def minimax_move(self, depth, state, alpha, beta, maximizingPlayer, start_time):
         self.state_visited += 1
         if depth == 0 or state.game_over() or time.time() - start_time > 10:
-            return self.evaluation(state)
+            zobrist_hash = self.zh.calculate_zobrist_hash(state.board)
+            if zobrist_hash in self.transposition_table:
+                return self.transposition_table[zobrist_hash]
+            else:
+                evaluation = self.evaluation(state)
+                self.transposition_table[zobrist_hash] = evaluation
+                return evaluation
         if maximizingPlayer:
             max_score = -self.checkmate
             valid_moves = state.get_all_possible_move()
@@ -112,16 +148,23 @@ class minimax(AI):
     #     print("State visited:", self.state_visited)
     #     self.state_visited = 0
     #     return self.next_move
+    def is_quiescent(self, state):
+        # check if the state is quiescent
+        if state.game_over():
+            return True
+        if state.check:
+            return True
+
     def findMove(self, state, valid_moves):
         alpha = -self.checkmate
         beta = self.checkmate
         print("Finding moves with minimax, depth = ", self.DEPTH, "...")
         start_time = time.time()
-        current_state = copy.deepcopy(state)
-        score = self.minimax_move(self.DEPTH, current_state, alpha, beta, state.red_turn, start_time)
+        score = self.minimax_move(self.DEPTH, state, alpha, beta, state.red_turn, start_time)
         end_time = time.time()
         print("Time used: ", end_time - start_time)
         print("Score:", score)
         print("State visited:", self.state_visited)
+        print("Transposition table size:", len(self.transposition_table))
         self.state_visited = 0
         return self.next_move
