@@ -62,7 +62,7 @@ def evaluate_move(move, state):
             score += -multi * int(move.piece_captured[1])
 
     # Kiểm tra giá trị của ô đích nước đi
-    square = getChessNotation(move.end_row, move.end_col)
+    square = getChessNotation(move.start_row, move.start_col,move.end_row, move.end_col)
     if square in square_values:
         score += square_values[square]
 
