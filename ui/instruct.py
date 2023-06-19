@@ -1,23 +1,23 @@
 from tkinter import *
 
 
-def show_huong_dan():
-    huong_dan.deiconify()
+def show_instruct():
+    instruct.deiconify()
 
 
-huong_dan = Tk()
-huong_dan.title(" CỜ TOÁN VIỆT NAM")
-huong_dan.geometry("600x600+400+50")
-huong_dan.resizable(False, False)
-huong_dan.iconbitmap("img/logo.ico")
-huong_dan.configure(background="#769656")
+instruct = Tk()
+instruct.title(" CỜ TOÁN VIỆT NAM")
+instruct.geometry("600x600+400+50")
+instruct.resizable(False, False)
+instruct.iconbitmap("img/logo.ico")
+instruct.configure(background="#769656")
 
 label_title = Label(
-    huong_dan, text="HƯỚNG DẪN", font=("Arial", 20, "bold"), bg="#769656", fg="#0812aa"
+    instruct, text="HƯỚNG DẪN", font=("Arial", 20, "bold"), bg="#769656", fg="#0812aa"
 )
 label_title.pack(pady=10)
 text = Text(
-    huong_dan,
+    instruct,
     height=10,
     width=50,
     font=("Arial", 15),
@@ -31,7 +31,7 @@ text = Text(
     highlightthickness=0,
 )
 text.place(x=10, y=50)
-scrollbar = Scrollbar(huong_dan, orient="vertical", command=text.yview)
+scrollbar = Scrollbar(instruct, orient="vertical", command=text.yview)
 scrollbar.place(x=580, y=70, height=500)
 text.insert(
     "1.0",
@@ -48,4 +48,4 @@ text.insert(
 )
 text.config(yscrollcommand=scrollbar.set)
 
-huong_dan.mainloop()
+instruct.mainloop()
