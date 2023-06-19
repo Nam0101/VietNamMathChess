@@ -23,7 +23,8 @@ ALGORITHM = {0: "Minimax", 1: "Greedy"}
 # cài đặt ở hàm init game.
 # args:
 # dept: độ sâu, int
-# algo: thuật toán, int
+# algo1: thuật toán cho AI1, int
+# algo2: thuật toán cho AI2, int
 # player_one: người chơi 1, bool, nếu người chơi 1 là người thì True, nếu là AI thì False
 # player_two: người chơi 2, bool, nếu người chơi 2 là người thì True, nếu là AI thì False
 # ví dụ: game = Game(2, 0, True, False) -> người chơi 1 là người, người chơi 2 là AI, độ sâu là 2, thuật toán là minimax
@@ -32,7 +33,7 @@ ALGORITHM = {0: "Minimax", 1: "Greedy"}
 #3 -> update sau
 class Game:
 
-    def __init__(self, dept, algo, player_one, player_two):
+    def __init__(self, dept, algo1,algo2, player_one, player_two):
         self.state = state.State()
         # initialize game window,
         self.all_sprites = None
