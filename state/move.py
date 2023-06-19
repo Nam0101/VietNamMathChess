@@ -1,15 +1,5 @@
-from numba import int64, boolean
-from numba.experimental import jitclass
-
-import numpy as np
-from ai.variable import COLUMN
-from ai.variable import ROW
-from ai.variable import piece_score
-from ai.variable import square_values
-from ai.variable import ranks_to_rows
-from ai.variable import files_to_cols
-from ai.variable import rows_to_ranks
 from ai.variable import cols_to_files
+from ai.variable import rows_to_ranks
 
 
 class Move:

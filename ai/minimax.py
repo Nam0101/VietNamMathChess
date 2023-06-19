@@ -1,20 +1,13 @@
 import random
+import time
 
-from numba import jit, njit
+import numpy as np
 
 from ai.AI import AI
-from ai.AI import ranks_to_rows
-from ai.AI import files_to_cols
-from ai.AI import rows_to_ranks
-from ai.AI import cols_to_files
-from ai.AI import ROW
 from ai.AI import COLUMN
-from ai.AI import getRankFile
+from ai.AI import ROW
 from ai.AI import getChessNotation
-import time
-import copy
 from ai.variable import square_values
-import numpy as np
 
 
 class Zobrist_hash:
@@ -43,6 +36,7 @@ class Zobrist_hash:
                     hash_value ^= self.zobrist_keys[row, col, piece_index]
         return hash_value
 
+
 def evaluate_move(move, state):
     multi = 1 if state.red_turn else -1
     score = 0
@@ -62,12 +56,11 @@ def evaluate_move(move, state):
             score += -multi * int(move.piece_captured[1])
 
     # Kiểm tra giá trị của ô đích nước đi
-    square = getChessNotation(move.start_row, move.start_col,move.end_row, move.end_col)
+    square = getChessNotation(move.start_row, move.start_col, move.end_row, move.end_col)
     if square in square_values:
         score += square_values[square]
 
     return score
-
 
 
 class minimax(AI):

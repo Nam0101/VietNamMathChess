@@ -1,10 +1,31 @@
-from tkinter import *
-from PIL import ImageTk, Image
-import pygame as pg
 import sys
+from tkinter import *
+
+import pygame as pg
+from PIL import ImageTk, Image
 
 path = "..//VietNamMathChess"
 sys.path.append(path)
+from game import game
+
+
+# x = 3
+
+
+def show_view1():
+    view1.deiconify()
+
+
+def click_nguoi_nguoi():
+    # global x
+    # x = 1
+    # button_nguoi_nguoi.config(bg="#0812aa")
+    # button_nguoi_may.config(bg="#595fae")
+    # button_may_may.config(bg="#595fae")
+    view1.withdraw()
+    g = game.Game()
+
+
 from game.game import Game
 
 
@@ -19,7 +40,6 @@ def click_man_man():
 
 def click_view2():
     view1.destroy()
-    from ui import view2
 
 
 def click_instruct():
@@ -41,7 +61,6 @@ bt1 = ImageTk.PhotoImage(Image.open("img/bt1.png").resize((300, 80)))
 bt2 = ImageTk.PhotoImage(Image.open("img/bt2.png").resize((300, 80)))
 bt3 = ImageTk.PhotoImage(Image.open("img/bt3.png").resize((300, 80)))
 bt4 = ImageTk.PhotoImage(Image.open("img/bt4.png").resize((300, 80)))
-
 
 botton_man_man = Button(
     view1,

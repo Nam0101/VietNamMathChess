@@ -1,17 +1,8 @@
-import time
-
-import numpy as np
-from numba import jit
-
-from ai.variable import square_values
-from ai.variable import piece_score
 from ai.variable import COLUMN
 from ai.variable import ROW
-from ai.variable import ranks_to_rows
-from ai.variable import files_to_cols
-from ai.variable import rows_to_ranks
 from ai.variable import cols_to_files
-from state.state import State
+from ai.variable import piece_score
+from ai.variable import rows_to_ranks
 
 
 def getRankFile(r, c):
@@ -91,5 +82,3 @@ class AI:
 
     def findMove(self, statement, valid_moves):
         raise NotImplementedError
-
-

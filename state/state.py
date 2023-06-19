@@ -1,8 +1,6 @@
-from numba import int64
-from numba.experimental import jitclass
+import numpy as np
 
 from .move import Move
-import numpy as np
 
 COlUMN = 9
 ROW = 11
@@ -87,9 +85,9 @@ class State:
                 piece = self.board[row, col]
                 turn = piece[0]
                 if (
-                    piece != "--"
-                    and (turn == "r" and self.red_turn)
-                    or (turn == "b" and not self.red_turn)
+                        piece != "--"
+                        and (turn == "r" and self.red_turn)
+                        or (turn == "b" and not self.red_turn)
                 ):
                     piece_step = int(self.board[row, col][1])
                     if piece_step == 0:

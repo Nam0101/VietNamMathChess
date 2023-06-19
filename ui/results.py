@@ -1,4 +1,5 @@
 from tkinter import *
+
 from PIL import ImageTk, Image
 
 
@@ -13,6 +14,7 @@ class Results:
         self.kq = kq
 
     def show_results(self):
+        global img
         results = Tk()
         results.title(" CỜ TOÁN VIỆT NAM")
         results.geometry("600x650+400+30")

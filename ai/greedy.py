@@ -1,5 +1,3 @@
-import random
-
 from ai.AI import AI
 
 current_state = None

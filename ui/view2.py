@@ -1,4 +1,5 @@
 from tkinter import *
+
 from PIL import ImageTk, Image
 
 thuat_toan = 1
@@ -8,27 +9,23 @@ def click_tt1():
     global thuat_toan
     thuat_toan = 1
     view2.destroy()
-    from ui import view3
 
 
 def click_tt2():
     global thuat_toan
     thuat_toan = 2
     view2.destroy()
-    from ui import view3
 
 
 def clicktt3():
     global thuat_toan
     thuat_toan = 3
     view2.destroy()
-    from ui import view3
 
 
 def click_back():
     # view2.withdraw()
     view2.destroy()
-    from ui import view1
 
     # view1.show_view1()
 
@@ -46,7 +43,6 @@ bt1 = ImageTk.PhotoImage(Image.open("img/bt2_1.png").resize((300, 70)))
 bt2 = ImageTk.PhotoImage(Image.open("img/bt2_2.png").resize((300, 70)))
 bt3 = ImageTk.PhotoImage(Image.open("img/bt2_3.png").resize((300, 70)))
 bt4 = ImageTk.PhotoImage(Image.open("img/bt2_4.png").resize((300, 70)))
-
 
 button_tt1 = Button(
     view2,
@@ -83,6 +79,5 @@ button_back = Button(
     command=click_back,
 )
 button_back.place(x=150, y=550, width=300, height=70)
-
 
 view2.mainloop()

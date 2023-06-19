@@ -1,5 +1,5 @@
-import random
 import math
+import random
 
 from state.state import State
 
@@ -44,6 +44,7 @@ class Node:
         if self.parent:
             self.parent.backpropagate(result)
 
+
 class MCTS:
     def __init__(self, initial_state, exploration_budget):
         self.initial_state = initial_state
@@ -69,6 +70,7 @@ class MCTS:
             node = node.select_child()
         return node
 
+
 # Các lớp State và Move tùy chỉnh cho trò chơi Tic-Tac-Toe
 # Cần cài đặt các phương thức get_possible_moves, make_move, is_terminal, get_result cho lớp State
 
@@ -78,6 +80,7 @@ def run_mcts():
     mcts = MCTS(initial_state, exploration_budget=1000)
     final_state = mcts.search()
     # Xử lý kết quả cuối cùng
+
 
 if __name__ == "__main__":
     run_mcts()

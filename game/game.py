@@ -1,12 +1,8 @@
-import time
-
 import pygame as pg
-import time
+
 import state.move as move
 import state.state as state
-from ai import greedy as greedy, minimax
-from numba import jit, njit
-import numpy as np
+from ai import minimax
 
 delay = 1
 WIDTH = 576
@@ -24,8 +20,19 @@ color = [(238, 238, 210), (118, 150, 86)]
 ALGORITHM = {0: "Minimax", 1: "Greedy"}
 
 
+# cài đặt ở hàm init game.
+# args:
+# dept: độ sâu, int
+# algo: thuật toán, int
+# player_one: người chơi 1, bool, nếu người chơi 1 là người thì True, nếu là AI thì False
+# player_two: người chơi 2, bool, nếu người chơi 2 là người thì True, nếu là AI thì False
+# ví dụ: game = Game(2, 0, True, False) -> người chơi 1 là người, người chơi 2 là AI, độ sâu là 2, thuật toán là minimax
+#1-> greedy
+#0-> minimax
+#3 -> update sau
 class Game:
-    def __init__(self):
+
+    def __init__(self, dept, algo, player_one, player_two):
         self.state = state.State()
         # initialize game window,
         self.all_sprites = None
@@ -34,7 +41,7 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(3)
+        self.ai_blue = minimax.minimax(dept)
         self.ai_red = minimax.minimax(2)
         self.highlight_color = [(254, 0, 0), (0, 0, 254)]
         pg.init()
@@ -72,6 +79,9 @@ class Game:
         ]
         self.piece_img = {}
         for i in range(len(self.piece)):
+            self.piece_img[self.piece[i]] = pg.image.load("img/" + self.piece[i] + ".png").convert_alpha()
+            self.piece_img[self.piece[i]] = pg.transform.scale(self.piece_img[self.piece[i]],
+                                                               (SQUARE_SIZE, SQUARE_SIZE))
             self.piece_img[self.piece[i]] = pg.image.load(
                 "img/" + self.piece[i] + ".png"
             ).convert_alpha()
@@ -85,7 +95,6 @@ class Game:
         # false if AI play red, same as player_two
         self.player_one = player_one
         self.player_two = player_two
-        self.new()
 
     def new(self):
         # start a new game
@@ -107,10 +116,10 @@ class Game:
 
     def events(self):
         self.human_turn = (
-            self.state.red_turn
-            and self.player_one
-            or not self.state.red_turn
-            and self.player_two
+                self.state.red_turn
+                and self.player_one
+                or not self.state.red_turn
+                and self.player_two
         )
         for event in pg.event.get():
             # check for closing window
@@ -173,10 +182,10 @@ class Game:
                 self.move_made = True
                 print("AI made move", ai_move.to_string())
                 self.human_turn = (
-                    self.state.red_turn
-                    and self.player_one
-                    or not self.state.red_turn
-                    and self.player_two
+                        self.state.red_turn
+                        and self.player_one
+                        or not self.state.red_turn
+                        and self.player_two
                 )
             if not self.human_turn and self.running and self.state.red_turn:
                 ai_move = self.ai_red.findMove(self.state, self.valid_moves)
@@ -184,10 +193,10 @@ class Game:
                 self.draw_state()
                 self.move_made = True
                 self.human_turn = (
-                    self.state.red_turn
-                    and self.player_one
-                    or not self.state.red_turn
-                    and self.player_two
+                        self.state.red_turn
+                        and self.player_one
+                        or not self.state.red_turn
+                        and self.player_two
                 )
 
     def draw_board(self):
@@ -244,6 +253,9 @@ class Game:
                 self.previous_square = (row, col)
                 for movement in (m for m in self.valid_moves):
                     if movement.start_row == row and movement.start_col == col:
+                        pg.draw.rect(self.screen, self.highlight_color[0 if self.state.red_turn else 1],
+                                     (movement.end_col * SQUARE_SIZE, movement.end_row * SQUARE_SIZE,
+                                      SQUARE_SIZE, SQUARE_SIZE), 4)
                         pg.draw.rect(
                             self.screen,
                             self.highlight_color[0 if self.state.red_turn else 1],
