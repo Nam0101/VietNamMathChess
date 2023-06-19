@@ -12,17 +12,22 @@ move_direction = [[-1, 0], [0, 1], [1, 0], [0, -1], [-1, 1], [1, 1], [1, -1], [-
 
 class State:
     def __init__(self):
-        self.board = np.array([["b9", "b8", "b7", "b6", "b5", "b4", "b3", "b2", "b1"],
-                               ["--", "--", "--", "--", "b0", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
-                               ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
-                               ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"]], dtype=np.str_)
+        self.board = np.array(
+            [
+                ["b9", "b8", "b7", "b6", "b5", "b4", "b3", "b2", "b1"],
+                ["--", "--", "--", "--", "b0", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "--", "--", "--", "--", "--"],
+                ["--", "--", "--", "--", "r0", "--", "--", "--", "--"],
+                ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"],
+            ],
+            dtype=np.str_,
+        )
         self.playing = False
         self.red_turn = True
         self.red_score = 0
@@ -30,8 +35,8 @@ class State:
         self.move_log = []
 
     def make_move(self, movement):
-        self.board[movement.start_row,movement.start_col] = "--"
-        self.board[movement.end_row,movement.end_col] = movement.piece_moved
+        self.board[movement.start_row, movement.start_col] = "--"
+        self.board[movement.end_row, movement.end_col] = movement.piece_moved
         self.calculate_score()
         self.move_log.append(movement)
         self.red_turn = not self.red_turn
@@ -39,20 +44,29 @@ class State:
     def undo_move(self):
         if self.move_log.__len__() != 0:
             movement = self.move_log.pop()
-            self.board[movement.start_row,movement.start_col] = movement.piece_moved
-            self.board[movement.end_row,movement.end_col] = movement.piece_captured
+            self.board[movement.start_row, movement.start_col] = movement.piece_moved
+            self.board[movement.end_row, movement.end_col] = movement.piece_captured
             self.calculate_score()
             self.red_turn = not self.red_turn
 
     def game_over(self):
-        return self.red_score >= 20 or self.blue_score >= 20 or self.board[1,4] != 'b0' or self.board[9,4] != 'r0'
+        if self.red_score >= 20 or self.board[1, 4] != "b0":
+            return 1
+        if self.blue_score >= 20 or self.board[9, 4] != "r0":
+            return 2
+        # return (
+        #     self.red_score >= 20
+        #     or self.blue_score >= 20
+        #     or self.board[1, 4] != "b0"
+        #     or self.board[9, 4] != "r0"
+        # )
 
     def calculate_score(self):
         self.red_score = 45
         self.blue_score = 45
         for row in range(ROW):
             for col in range(COlUMN):
-                piece = self.board[row,col]
+                piece = self.board[row, col]
                 if piece == "--":
                     continue
                 if piece[0] == "r":
@@ -72,7 +86,11 @@ class State:
             for col in range(COlUMN):
                 piece = self.board[row, col]
                 turn = piece[0]
-                if piece != "--" and (turn == "r" and self.red_turn) or (turn == "b" and not self.red_turn):
+                if (
+                    piece != "--"
+                    and (turn == "r" and self.red_turn)
+                    or (turn == "b" and not self.red_turn)
+                ):
                     piece_step = int(self.board[row, col][1])
                     if piece_step == 0:
                         continue
@@ -90,7 +108,9 @@ class State:
                     break
                 end_piece = self.board[end_row, end_col]
                 if end_piece == "--":
-                    possible_moves.append(Move((row, col), (end_row, end_col), self.board))
+                    possible_moves.append(
+                        Move((row, col), (end_row, end_col), self.board)
+                    )
                 else:
                     break
         return possible_moves
@@ -112,8 +132,16 @@ class State:
                     if piece_step < team_piece:
                         division_attack = 0
                         remain_attack = 0
-                    attack_step = [add_attack, sub_attack, multi_attack, division_attack, remain_attack]
-                    possible_moves.extend(self.get_attack_move(attack_step, (row, col), (i, j)))
+                    attack_step = [
+                        add_attack,
+                        sub_attack,
+                        multi_attack,
+                        division_attack,
+                        remain_attack,
+                    ]
+                    possible_moves.extend(
+                        self.get_attack_move(attack_step, (row, col), (i, j))
+                    )
         return possible_moves
 
     def get_attack_move(self, attack_step, current_piece, direction):
@@ -146,7 +174,9 @@ class State:
                 if 0 <= end_row < 11 and 0 <= end_col < 9:
                     end_piece = self.board[end_row, end_col]
                     if end_piece[0] == enemy_color:
-                        possible_moves.append(Move(current_piece, (end_row, end_col), self.board))
+                        possible_moves.append(
+                            Move(current_piece, (end_row, end_col), self.board)
+                        )
         return possible_moves
 
     def to_string(self):
@@ -161,7 +191,3 @@ class State:
             if move.end_row == king_row and move.end_col == king_col:
                 return True
         return False
-
-
-
-
