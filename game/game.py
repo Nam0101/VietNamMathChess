@@ -7,6 +7,7 @@ import state.state as state
 from ai import greedy as greedy, minimax
 from numba import jit, njit
 import numpy as np
+
 delay = 1
 WIDTH = 576
 HEIGHT = 704
@@ -26,9 +27,16 @@ ALGORITHM = {
 }
 
 
+# cài đặt ở hàm init game.
+# args:
+# dept: độ sâu, int
+#algo: thuật toán, int
+# player_one: người chơi 1, bool, nếu người chơi 1 là người thì True, nếu là AI thì False
+# player_two: người chơi 2, bool, nếu người chơi 2 là người thì True, nếu là AI thì False
+
 class Game:
 
-    def __init__(self):
+    def __init__(self, dept, algo, player_one, player_two):
         self.state = state.State()
         # initialize game window,
         self.all_sprites = None
@@ -37,7 +45,7 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(3)
+        self.ai_blue = minimax.minimax(dept)
         self.ai_red = minimax.minimax(2)
         self.highlight_color = [(254, 0, 0), (0, 0, 254)]
         pg.init()
@@ -58,14 +66,10 @@ class Game:
             self.piece_img[self.piece[i]] = pg.image.load("img/" + self.piece[i] + ".png").convert_alpha()
             self.piece_img[self.piece[i]] = pg.transform.scale(self.piece_img[self.piece[i]],
                                                                (SQUARE_SIZE, SQUARE_SIZE))
-        self.setting(0, 0, True,False)
-
-    def setting(self, dept, algo, player_one, player_two):
-        # setting game, dept is dept of game tree, algo is algorithm to use, player_one is true if human play red,
-        # false if AI play red, same as player_two
         self.player_one = player_one
         self.player_two = player_two
-        self.new()
+
+
 
     def new(self):
         # start a new game

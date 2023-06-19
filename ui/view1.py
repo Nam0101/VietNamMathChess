@@ -8,6 +8,7 @@ path = "..//VietNamMathChess"
 sys.path.append(path)
 from game import game
 
+
 # x = 3
 
 
@@ -22,7 +23,7 @@ def click_nguoi_nguoi():
     # button_nguoi_may.config(bg="#595fae")
     # button_may_may.config(bg="#595fae")
     view1.withdraw()
-    g = game.Game()
+    g = game.Game(3, 0, True, False)
     while g.running:
         g.new()
     pg.quit()
