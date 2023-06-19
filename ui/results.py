@@ -54,10 +54,13 @@ class Results:
         button_oke = Button(
             panel,
             image=img_oke,
-            border=0,
-            # bg="#3a3d70",
+            bg="#3a3d70",
             # command=results.destroy,
         )
         button_oke.place(x=250, y=500, width=100, height=100)
 
         results.mainloop()
+
+
+Results = Results(1, 2, 1)
+Results.show_results()
