@@ -1,6 +1,6 @@
 from tkinter import *
 
-x = 3
+thuat_toan = 1
 
 
 def show_view2():
@@ -8,24 +8,24 @@ def show_view2():
 
 
 def click_tt1():
-    global x
-    x = 1
+    global thuat_toan
+    thuat_toan = 1
     button_tt1.config(bg="#0812aa")
     button_tt2.config(bg="#595fae")
     buttontt3.config(bg="#595fae")
 
 
 def click_tt2():
-    global x
-    x = 2
+    global thuat_toan
+    thuat_toan = 2
     button_tt1.config(bg="#595fae")
     button_tt2.config(bg="#0812aa")
     buttontt3.config(bg="#595fae")
 
 
 def clicktt3():
-    global x
-    x = 3
+    global thuat_toan
+    thuat_toan = 3
     button_tt1.config(bg="#595fae")
     button_tt2.config(bg="#595fae")
     buttontt3.config(bg="#0812aa")
@@ -51,10 +51,10 @@ view2.geometry("600x600+400+50")
 view2.resizable(False, False)
 view2.iconbitmap("img/logo.ico")
 view2.configure(background="#769656")
-# img2 = Image.open("img/b1.png")
+# img = Image.open("img/bg.png")
 # # img = img.resize((600, 600), Image.ANTIALIAS)
-# img2 = ImageTk.PhotoImage(img2)
-# panel = Label(view2, image=img2)
+# img = ImageTk.PhotoImage(img)
+# panel = Label(view2, image=img)
 # panel.place(x=0, y=0, relwidth=1, relheight=1)
 
 label_title = Label(
