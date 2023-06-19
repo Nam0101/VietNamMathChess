@@ -1,7 +1,8 @@
-from tkinter import *
-from PIL import ImageTk, Image
-import pygame as pg
 import sys
+from tkinter import *
+
+import pygame as pg
+from PIL import ImageTk, Image
 
 do_sau = 1
 
@@ -14,7 +15,7 @@ def click_play():
     global do_sau
     do_sau = scale.get()
     view3.withdraw()
-    g = game.Game()
+    g = game.Game(3,1,True,False)
     view3.destroy()
     g = game.Game()
     while g.running:
@@ -26,7 +27,6 @@ def click_play():
 def click_back():
     # view3.withdraw()
     view3.destroy()
-    from ui import view2
 
     # view2.show_view2()
 
@@ -47,11 +47,9 @@ img = ImageTk.PhotoImage(Image.open("img/bg3.png").resize((600, 650)))
 panel = Label(view3, image=img)
 panel.place(x=0, y=0, relwidth=1, relheight=1)
 
-
 bt1 = ImageTk.PhotoImage(Image.open("img/bt3_1.png").resize((250, 70)))
 bt2 = ImageTk.PhotoImage(Image.open("img/bt3_2.png").resize((250, 70)))
 bt3 = ImageTk.PhotoImage(Image.open("img/bt3_3.png").resize((250, 70)))
-
 
 scale = Scale(
     view3,
@@ -81,7 +79,6 @@ label_scale = Label(
 )
 label_scale.place(x=175, y=330, width=250, height=70)
 update_scale()
-
 
 button_back = Button(
     view3,
