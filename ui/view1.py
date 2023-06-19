@@ -1,4 +1,5 @@
 from tkinter import *
+
 from PIL import ImageTk, Image
 import pygame as pg
 import sys
@@ -81,7 +82,6 @@ img = ImageTk.PhotoImage(img)
 panel = Label(view1, image=img)
 panel.image = img
 panel.place(x=0, y=0, relwidth=1, relheight=1)
-
 
 label_title = Label(
     view1,

@@ -1,5 +1,4 @@
 from tkinter import *
-from PIL import ImageTk, Image
 
 thuat_toan = 1
 

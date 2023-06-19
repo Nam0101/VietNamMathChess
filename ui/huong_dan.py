@@ -48,5 +48,4 @@ text.insert(
 )
 text.config(yscrollcommand=scrollbar.set)
 
-
 huong_dan.mainloop()
