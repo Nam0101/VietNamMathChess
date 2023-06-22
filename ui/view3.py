@@ -15,9 +15,9 @@ def click_play():
     global do_sau
     do_sau = scale.get()
     view3.withdraw()
-    g = game.Game(3,1,True,False)
+    g = game.Game(3, 1, 1, True, False)
     view3.destroy()
-    g = game.Game()
+    g = game.Game(3, 1, 1, True, False)
     while g.running:
         g.new()
     pg.quit()

@@ -1,4 +1,4 @@
-from ai.variable import COLUMN
+from ai.variable import COLUMN, square_values
 from ai.variable import ROW
 from ai.variable import cols_to_files
 from ai.variable import piece_score
@@ -46,8 +46,6 @@ class AI:
         self.stalemate = 0
 
     def evaluation(self, state):
-        square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
-                         "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 1, "f5": 1}
         score = 0
         red_score = 0
         blue_score = 0
@@ -70,11 +68,6 @@ class AI:
                         score -= self.checkmate
                     else:
                         score -= piece_score[piece[1]]
-        # red_possible_moves = len(state.get_all_possible_move())
-        # state.red_turn = not state.red_turn
-        # blue_possible_moves = len(state.get_all_possible_move())
-        # state.red_turn = not state.red_turn
-        # possible_move = red_possible_moves - blue_possible_moves if state.red_turn else blue_possible_moves - red_possible_moves
         return score + 0.5 * red_score - 0.5 * blue_score
 
     def AI_move(self):

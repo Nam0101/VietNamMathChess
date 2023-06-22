@@ -1,3 +1,5 @@
+import sys
+
 import pygame as pg
 
 import state.move as move
@@ -42,9 +44,9 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(dept)
+        self.ai_blue = minimax.minimax(9)
         self.ai_red = minimax.minimax(2)
-        self.highlight_color = [(254, 0, 0), (0, 0, 254)]
+        self.highlight_color = [(250, 0, 0), (0, 0, 250)]
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -160,6 +162,7 @@ class Game:
                     self.move_made = True
                 if event.key == pg.K_ESCAPE:
                     self.running = False
+                    sys.exit()
             if self.move_made:
                 self.valid_moves = self.state.get_all_possible_move()
                 self.move_made = False
