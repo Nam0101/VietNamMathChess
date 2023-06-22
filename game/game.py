@@ -5,7 +5,8 @@ import pygame as pg
 import state.move as move
 import state.state as state
 from ai import minimax
-
+from ai.negamax import Negamax
+from ai.negascout import NegaScout
 delay = 1
 WIDTH = 576
 HEIGHT = 704
@@ -30,12 +31,12 @@ ALGORITHM = {0: "Minimax", 1: "Greedy"}
 # player_one: người chơi 1, bool, nếu người chơi 1 là người thì True, nếu là AI thì False
 # player_two: người chơi 2, bool, nếu người chơi 2 là người thì True, nếu là AI thì False
 # ví dụ: game = Game(2, 0, True, False) -> người chơi 1 là người, người chơi 2 là AI, độ sâu là 2, thuật toán là minimax
-#1-> greedy
-#0-> minimax
-#3 -> update sau
+# 1-> greedy
+# 0-> minimax
+# 3 -> update sau
 class Game:
 
-    def __init__(self, dept, algo1,algo2, player_one, player_two):
+    def __init__(self, dept, algo1, algo2, player_one, player_two):
         self.state = state.State()
         # initialize game window,
         self.all_sprites = None
@@ -44,7 +45,7 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(9)
+        self.ai_blue = minimax.minimax(4)
         self.ai_red = minimax.minimax(2)
         self.highlight_color = [(250, 0, 0), (0, 0, 250)]
         pg.init()
@@ -91,13 +92,6 @@ class Game:
             self.piece_img[self.piece[i]] = pg.transform.scale(
                 self.piece_img[self.piece[i]], (SQUARE_SIZE, SQUARE_SIZE)
             )
-        self.setting(0, 0, True, False)
-
-    def setting(self, dept, algo, player_one, player_two):
-        # setting game, dept is dept of game tree, algo is algorithm to use, player_one is true if human play red,
-        # false if AI play red, same as player_two
-        self.player_one = player_one
-        self.player_two = player_two
 
     def new(self):
         # start a new game
@@ -125,7 +119,6 @@ class Game:
                 and self.player_two
         )
         for event in pg.event.get():
-            # check for closing window
             if event.type == pg.QUIT:
                 self.running = False
             elif event.type == pg.MOUSEBUTTONDOWN:
@@ -169,14 +162,12 @@ class Game:
                 self.draw_state()
                 if self.state.game_over() == 1 or self.state.game_over() == 2:
                     from ui.results import Results
-
                     kq = Results(
                         self.state.red_score,
                         self.state.blue_score,
                         self.state.game_over(),
                     )
                     kq.show_results()
-
                     print("Game over")
                     self.running = False
             if not self.human_turn and self.running and not self.state.red_turn:
@@ -195,6 +186,7 @@ class Game:
                 ai_move = self.ai_red.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
                 self.draw_state()
+                print("AI made move", ai_move.to_string())
                 self.move_made = True
                 self.human_turn = (
                         self.state.red_turn

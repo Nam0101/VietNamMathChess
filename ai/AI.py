@@ -70,8 +70,43 @@ class AI:
                         score -= piece_score[piece[1]]
         return score + 0.5 * red_score - 0.5 * blue_score
 
+    def evaluate_move(self, move, state):
+        multi = 1 if state.red_turn else -1
+        score = 0
+        if move.piece_captured[0] == "r":
+            if move.piece_captured[1] == "0":
+                score += multi * self.checkmate
+            else:
+                score += multi * int(move.piece_captured[1])
+        elif move.piece_captured[0] == "b":
+            if move.piece_captured[1] == "0":
+                score += multi * -self.checkmate
+            else:
+                score += -multi * int(move.piece_captured[1])
+        square = getRankFile(move.end_row, move.end_col)
+        if square in square_values:
+            score += multi * square_values[square]
+        return score
+
     def AI_move(self):
         raise NotImplementedError
 
     def findMove(self, statement, valid_moves):
         raise NotImplementedError
+
+    def quiesce(self, alpha, beta, state):
+        stand_pat = self.evaluation(state)
+        if stand_pat >= beta:
+            return beta
+        if alpha < stand_pat:
+            alpha = stand_pat
+        valid_moves = state.get_all_attack_move()
+        for player_move in valid_moves:
+            state.make_move(player_move)
+            score = -self.quiesce(-beta, -alpha, state)
+            state.undo_move()
+            if score >= beta:
+                return beta
+            if score > alpha:
+                alpha = score
+        return alpha

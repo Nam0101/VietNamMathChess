@@ -5,7 +5,7 @@ from ai.AI import AI
 from ai.Zobrist_hash import Zobrist_hash
 
 
-class Negamax(AI):
+class NegaScout(AI):
     def __init__(self, depth):
         super().__init__()
         self.zh = Zobrist_hash()
@@ -19,7 +19,7 @@ class Negamax(AI):
         evaluation = super().evaluation(state)
         return evaluation
 
-    def negamax_alpha_beta(self, state, depth, alpha, beta, turn_multiplier):
+    def negascout_alpha_beta(self, state, depth, alpha, beta, turn_multiplier):
         self.state_visited += 1
         if depth == 0 or state.game_over():
             zobrist_hash = self.zh.calculate_zobrist_hash(state.board)
@@ -30,15 +30,19 @@ class Negamax(AI):
                 evaluation = turn_multiplier * self.evaluation(state)
                 self.transposition_table[zobrist_hash] = evaluation
                 return evaluation
-        max_score = -self.checkmate
         valid_moves = state.get_all_possible_move()
-        sorted_moves = (player_move for player_move in
-                        sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
-                               reverse=state.red_turn))
-        for move in sorted_moves:
+        max_score = float('-inf')
+        for i, move in enumerate(valid_moves):
             state.make_move(move)
-            score = -self.negamax_alpha_beta(state, depth - 1, -beta, -alpha,
-                                             -turn_multiplier)
+            if i == 0:
+                score = -self.negascout_alpha_beta(state, depth - 1, -beta, -alpha,
+                                                   -turn_multiplier)
+            else:
+                score = -self.negascout_alpha_beta(state, depth - 1, -alpha - 1, -alpha,
+                                                   -turn_multiplier)
+                if alpha < score < beta:
+                    score = -self.negascout_alpha_beta(state, depth - 1, -beta, -score,
+                                                       -turn_multiplier)
             if score > max_score:
                 max_score = score
                 if depth == self.DEPTH:
@@ -52,9 +56,9 @@ class Negamax(AI):
     def findMove(self, statement, valid_moves):
         start_time = time.time()
         self.result_move = None
-        print("Finding moves with negamax, depth = ", self.DEPTH, "...")
-        score = self.negamax_alpha_beta(statement, self.DEPTH, -self.checkmate, self.checkmate,
-                                        1 if statement.red_turn else -1)
+        print("Finding moves with NegaScout, depth = ", self.DEPTH, "...")
+        score = self.negascout_alpha_beta(statement, self.DEPTH, float('-inf'), float('inf'),
+                                           1 if statement.red_turn else -1)
         end_time = time.time()
         print("Time used: ", end_time - start_time)
         print("Score:", score)
