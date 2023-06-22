@@ -1,4 +1,4 @@
-from ai.variable import COLUMN
+from ai.variable import COLUMN, square_values
 from ai.variable import ROW
 from ai.variable import cols_to_files
 from ai.variable import piece_score
@@ -46,8 +46,6 @@ class AI:
         self.stalemate = 0
 
     def evaluation(self, state):
-        square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
-                         "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 1, "f5": 1}
         score = 0
         red_score = 0
         blue_score = 0
@@ -70,15 +68,45 @@ class AI:
                         score -= self.checkmate
                     else:
                         score -= piece_score[piece[1]]
-        # red_possible_moves = len(state.get_all_possible_move())
-        # state.red_turn = not state.red_turn
-        # blue_possible_moves = len(state.get_all_possible_move())
-        # state.red_turn = not state.red_turn
-        # possible_move = red_possible_moves - blue_possible_moves if state.red_turn else blue_possible_moves - red_possible_moves
         return score + 0.5 * red_score - 0.5 * blue_score
+
+    def evaluate_move(self, move, state):
+        multi = 1 if state.red_turn else -1
+        score = 0
+        if move.piece_captured[0] == "r":
+            if move.piece_captured[1] == "0":
+                score += multi * self.checkmate
+            else:
+                score += multi * int(move.piece_captured[1])
+        elif move.piece_captured[0] == "b":
+            if move.piece_captured[1] == "0":
+                score += multi * -self.checkmate
+            else:
+                score += -multi * int(move.piece_captured[1])
+        square = getRankFile(move.end_row, move.end_col)
+        if square in square_values:
+            score += multi * square_values[square]
+        return score
 
     def AI_move(self):
         raise NotImplementedError
 
     def findMove(self, statement, valid_moves):
         raise NotImplementedError
+
+    def quiesce(self, alpha, beta, state):
+        stand_pat = self.evaluation(state)
+        if stand_pat >= beta:
+            return beta
+        if alpha < stand_pat:
+            alpha = stand_pat
+        valid_moves = state.get_all_attack_move()
+        for player_move in valid_moves:
+            state.make_move(player_move)
+            score = -self.quiesce(-beta, -alpha, state)
+            state.undo_move()
+            if score >= beta:
+                return beta
+            if score > alpha:
+                alpha = score
+        return alpha

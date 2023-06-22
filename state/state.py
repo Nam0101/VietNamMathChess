@@ -59,6 +59,11 @@ class State:
         #     or self.board[9, 4] != "r0"
         # )
 
+    def last_move(self):
+        if self.move_log.__len__() != 0:
+            return self.move_log[-1]
+        return None
+
     def calculate_score(self):
         self.red_score = 45
         self.blue_score = 45
