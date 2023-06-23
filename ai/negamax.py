@@ -49,7 +49,7 @@ class Negamax(AI):
                 break
         return max_score
 
-    def findMove(self, statement, valid_moves):
+    def AI_find_move(self, statement, valid_moves):
         start_time = time.time()
         self.result_move = None
         print("Finding moves with negamax, depth = ", self.DEPTH, "...")

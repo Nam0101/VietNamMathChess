@@ -11,7 +11,7 @@ class greedy(AI):
         evaluation = super().evaluation(state)
         return evaluation
 
-    def findMove(self, statement, valid_moves, depth=0):
+    def AI_find_move(self, statement, valid_moves, depth=0):
         turn_multiplier = 1 if statement.red_turn else -1
         max_score = -self.checkmate
         best_move = None
