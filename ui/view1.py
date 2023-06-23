@@ -1,4 +1,5 @@
 import sys
+import tkinter
 from tkinter import *
 
 import pygame as pg
@@ -23,7 +24,6 @@ def click_nguoi_nguoi():
     # button_nguoi_may.config(bg="#595fae")
     # button_may_may.config(bg="#595fae")
     view1.withdraw()
-    g = game.Game()
 
 
 from game.game import Game
@@ -31,7 +31,7 @@ from game.game import Game
 
 def click_man_man():
     view1.destroy()
-    g = Game()
+    g = Game(0, 0, 0, True, True)
     while g.running:
         g.new()
     pg.quit()

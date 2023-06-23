@@ -71,7 +71,7 @@ class AI:
                 score -= checkmate
             else:
                 score -= piece_score[piece[1]]
-        return score + (red_score - blue_score) * 0.5
+        return score + (red_score - blue_score) * 0.2
 
     def evaluate_move(self, move, state):
         multi = 1 if state.red_turn else -1

@@ -6,6 +6,9 @@ import pygame as pg
 import state.move as move
 import state.state as state
 from ai import minimax
+from ai.greedy import greedy
+from ai.negamax import Negamax
+from ai.negascout import NegaScout
 
 delay = 1
 WIDTH = 704
@@ -27,18 +30,21 @@ ALGORITHM = {0: "Minimax", 1: "Greedy"}
 
 # cài đặt ở hàm init game.
 # args:
-# dept: độ sâu, int
+# dept1: độ sâu cho AI Red
+# dept2: độ sâu cho AI Blue
 # algo1: thuật toán cho AI1, int
 # algo2: thuật toán cho AI2, int
 # player_one: người chơi 1, bool, nếu người chơi 1 là người thì True, nếu là AI thì False
 # player_two: người chơi 2, bool, nếu người chơi 2 là người thì True, nếu là AI thì False
-# ví dụ: game = Game(2, 0, True, False) -> người chơi 1 là người, người chơi 2 là AI, độ sâu là 2, thuật toán là minimax
+# ví dụ: game = Game(2,2, 2, True, False) -> người chơi 1 là AI, người chơi 2 là AI, độ sâu là 2, thuật toán 1 là Minimax, thuật toán 2 là Minimax
 # 1-> greedy
-# 0-> minimax
-# 3 -> update sau
+# 2-> AlphaBeta
+# 3 -> Negamax
+# 4 -> NegaScout
+
 class Game:
 
-    def __init__(self, dept, algo1, algo2, player_one, player_two):
+    def __init__(self, dept1, dept2, algo1, algo2, player_one, player_two):
         self.state = state.State()
         # initialize game window,
         self.all_sprites = None
@@ -46,9 +52,27 @@ class Game:
         self.previous_square = ()
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
+        self.ai_red = None
+        self.ai_blue = None
         self.move_made = False
-        self.ai_blue = minimax.minimax(3)
-        self.ai_red = minimax.minimax(2)
+        if not player_one:
+            if algo1 == 1:
+                self.ai_red = greedy()
+            elif algo1 == 2:
+                self.ai_red = minimax.minimax(dept1)
+            elif algo1 == 3:
+                self.ai_red = Negamax(dept1)
+            elif algo1 == 4:
+                self.ai_red = NegaScout(dept1)
+        if not player_two:
+            if algo2 == 1:
+                self.ai_blue = greedy()
+            elif algo2 == 2:
+                self.ai_blue = minimax.minimax(dept2)
+            elif algo2 == 3:
+                self.ai_blue = Negamax(dept2)
+            elif algo2 == 4:
+                self.ai_blue = NegaScout(dept2)
         self.highlight_color = [(230, 0, 0), (0, 0, 230)]
         pg.init()
         self.sub_screen = pg.Surface((sub_screen_width, sub_screen_height))
@@ -59,8 +83,8 @@ class Game:
         self.font_name = pg.font.match_font(FONT_NAME)
         self.clock = pg.time.Clock()
         self.running = True
-        self.player_one = True  # if human play red, then this will be true. If AI is playing then this will be false
-        self.player_two = False  # same as above
+        self.player_one = player_one  # if human play red, then this will be true. If AI is playing then this will be false
+        self.player_two = player_two  # same as above
         self.human_turn = True  # if it is human turn, then this will be true
         self.piece = [
             "b0",
@@ -243,14 +267,14 @@ class Game:
     def show_go_screen(self):
         if self.state.game_over() == 1 or self.state.game_over() == 2:
             from ui.results import Results
-
             kq = Results(
                 self.state.red_score,
                 self.state.blue_score,
                 self.state.game_over(),
             )
             kq.show_results()
-
+            pg.display.quit()
+            pg.quit()
             print("game over")
             self.running = False
         pass

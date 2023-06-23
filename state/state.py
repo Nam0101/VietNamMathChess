@@ -83,8 +83,8 @@ class State:
                 piece_step = int(self.board[row, col][1])
                 if piece_step == 0:
                     continue
-                moves.extend(self.get_move_for_piece(piece_step, row, col))
                 moves.extend(self.attack_move(piece_step, turn, row, col))
+                moves.extend(self.get_move_for_piece(piece_step, row, col))
         return moves
 
     def get_move_for_piece(self, piece_step, row, col):
