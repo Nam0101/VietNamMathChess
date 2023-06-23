@@ -3,9 +3,6 @@ from ai.variable import rows_to_ranks
 
 
 class Move:
-    # map key to value
-    # key : value
-
     def __init__(self, start_square, end_square, board):
         self.start_row = start_square[0]
         self.start_col = start_square[1]
@@ -30,8 +27,7 @@ class Move:
 
     # override equals method
     def __eq__(self, other):
-        if isinstance(other, Move):
-            return self.move_ID == other.move_ID
+        return isinstance(other, Move) and self.move_ID == other.move_ID
 
     def to_string(self):
         s = "Move " + self.piece_moved + " from " + self.getRankFile(self.start_row,

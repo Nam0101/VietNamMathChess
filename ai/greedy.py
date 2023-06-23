@@ -1,5 +1,4 @@
 from ai.AI import AI
-from ai.minimax import evaluate_move
 
 current_state = None
 

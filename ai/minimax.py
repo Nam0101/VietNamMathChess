@@ -1,14 +1,7 @@
-import itertools
-import random
 import time
 
-import numpy as np
-
-from ai.AI import AI, getRankFile
-from ai.AI import COLUMN
-from ai.AI import ROW
+from ai.AI import AI
 from ai.Zobrist_hash import Zobrist_hash
-from ai.variable import square_values
 
 
 class minimax(AI):
@@ -44,8 +37,8 @@ class minimax(AI):
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))
             # only move 50% best move
-            moves_to_consider = itertools.islice(sorted_moves, int(.5 * len(valid_moves)))
-            for move in moves_to_consider:
+            # moves_to_consider = itertools.islice(sorted_moves, int(.7 * len(valid_moves)))
+            for move in sorted_moves:
                 # print(evaluate_move(move, state))
                 state.make_move(move)
                 eval_score = self.minimax_move(depth - 1, state, alpha, beta, False, start_time)
@@ -78,108 +71,6 @@ class minimax(AI):
                     if beta <= alpha:
                         break
             return min_score
-
-    # def alphabeta_with_memory(self, depth, state, alpha, beta, maximizingPlayer, start_time):
-    #     self.state_visited += 1
-    #
-    #     # Kiểm tra bảng tra cứu
-    #     zobrist_hash = self.zh.calculate_zobrist_hash(state.board)
-    #     if zobrist_hash in self.transposition_table:
-    #         entry = self.transposition_table[zobrist_hash]
-    #         if entry['depth'] >= depth:
-    #             if entry['type'] == 'exact':
-    #                 return entry['value']
-    #             elif entry['type'] == 'lowerbound':
-    #                 alpha = max(alpha, entry['value'])
-    #             elif entry['type'] == 'upperbound':
-    #                 beta = min(beta, entry['value'])
-    #             if alpha >= beta:
-    #                 return entry['value']
-    #
-    #     if depth == 0 or state.game_over() or time.time() - start_time > 10:
-    #         evaluation = self.evaluation(state)
-    #         self.transposition_table[zobrist_hash] = {
-    #             'depth': depth,
-    #             'type': 'exact',
-    #             'value': evaluation
-    #         }
-    #         return evaluation
-    #
-    #     if maximizingPlayer:
-    #         max_score = -self.checkmate
-    #         best_move = None
-    #         valid_moves = state.get_all_possible_move()
-    #         sorted_moves = (player_move for player_move in
-    #                         sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
-    #                                reverse=state.red_turn))
-    #         moves_to_consider = itertools.islice(sorted_moves, int(.5 * len(valid_moves)))
-    #
-    #         for move in moves_to_consider:
-    #             state.make_move(move)
-    #             eval_score = self.alphabeta_with_memory(depth - 1, state, alpha, beta, False, start_time)
-    #             state.undo_move()
-    #
-    #             if eval_score > max_score:
-    #                 max_score = eval_score
-    #                 best_move = move
-    #             alpha = max(alpha, max_score)
-    #             if alpha >= beta:
-    #                 break
-    #
-    #         # Lưu kết quả vào bảng tra cứu
-    #         entry_type = 'exact' if max_score <= alpha else 'lowerbound'
-    #         self.transposition_table[zobrist_hash] = {
-    #             'depth': depth,
-    #             'type': entry_type,
-    #             'value': max_score
-    #         }
-    #
-    #         if depth == self.DEPTH:
-    #             self.next_move = best_move
-    #
-    #         return max_score
-    #
-    #     else:
-    #         min_score = self.checkmate
-    #         best_move = None
-    #         valid_moves = state.get_all_possible_move()
-    #         sorted_moves = (player_move for player_move in
-    #                         sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
-    #                                reverse=state.red_turn))
-    #
-    #         for move in sorted_moves:
-    #             state.make_move(move)
-    #             eval_score = self.alphabeta_with_memory(depth - 1, state, alpha, beta, True, start_time)
-    #             state.undo_move()
-    #
-    #             if eval_score < min_score:
-    #                 min_score = eval_score
-    #                 best_move = move
-    #             beta = min(beta, min_score)
-    #             if alpha >= beta:
-    #                 break
-    #
-    #         # Lưu kết quả vào bảng tra cứu
-    #         entry_type = 'exact' if min_score >= beta else 'upperbound'
-    #         self.transposition_table[zobrist_hash] = {
-    #             'depth': depth,
-    #             'type': entry_type,
-    #             'value': min_score
-    #         }
-    #
-    #         if depth == self.DEPTH:
-    #             self.next_move = best_move
-    #
-    #         return min_score
-
-    # def mtdf(self, f, depth, state):
-    #     bound = [-self.checkmate, self.checkmate]
-    #     while bound[0] < bound[1]:
-    #         beta = f + (f == bound[0])
-    #         f = self.alphabeta_with_memory(depth, state, beta - 1, beta, True, time.time())
-    #         bound[f < beta] = f
-    #         print("f = ", f, "bound[0] = ", bound[0], "bound[1] = ", bound[1])
-    #     return f
 
     def findMove(self, state, valid_moves):
         alpha = -self.checkmate
