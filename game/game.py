@@ -5,11 +5,12 @@ import pygame as pg
 import state.move as move
 import state.state as state
 from ai import minimax
-from ai.negamax import Negamax
-from ai.negascout import NegaScout
+
 delay = 1
-WIDTH = 576
+WIDTH = 704
 HEIGHT = 704
+sub_screen_height = HEIGHT
+sub_screen_width = HEIGHT - 576
 TITLE = "Cờ Toán Việt Nam"
 FPS = 15
 FONT_NAME = "arial"
@@ -45,10 +46,11 @@ class Game:
         self.valid_moves = self.state.get_all_possible_move()
         self.player_clicks = []
         self.move_made = False
-        self.ai_blue = minimax.minimax(4)
+        self.ai_blue = minimax.minimax(3)
         self.ai_red = minimax.minimax(2)
         self.highlight_color = [(250, 0, 0), (0, 0, 250)]
         pg.init()
+        self.sub_screen = pg.Surface((sub_screen_width, sub_screen_height))
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_icon(pg.image.load(icon))
@@ -126,35 +128,38 @@ class Game:
                     x, y = pg.mouse.get_pos()
                     row = y // SQUARE_SIZE
                     col = x // SQUARE_SIZE
-                    if self.selected_square == (row, col):
-                        self.selected_square = ()
-                        self.player_clicks = []
-                    else:
-                        self.selected_square = (row, col)
-                        self.player_clicks.append(self.selected_square)
-                    if len(self.player_clicks) == 2:
-                        self.previous_square = self.player_clicks[0]
-                        movement = move.Move(
-                            self.player_clicks[0],
-                            self.player_clicks[1],
-                            self.state.board,
-                        )
-                        if movement in self.valid_moves:
-                            self.state.make_move(movement)
-                            print("Human made move", movement.to_string())
-                            self.move_made = True
-                            print(self.state.red_score, self.state.blue_score)
-                            self.player_clicks = []
+                    if 0 <= row < ROW and 0 <= col < COLUMN:
+                        if self.selected_square == (row, col):
                             self.selected_square = ()
+                            self.player_clicks = []
                         else:
-                            self.player_clicks = [self.selected_square]
+                            self.selected_square = (row, col)
+                            self.player_clicks.append(self.selected_square)
+                        if len(self.player_clicks) == 2:
+                            self.previous_square = self.player_clicks[0]
+                            movement = move.Move(
+                                self.player_clicks[0],
+                                self.player_clicks[1],
+                                self.state.board,
+                            )
+                            if movement in self.valid_moves:
+                                self.state.make_move(movement)
+                                print("Human made move", movement.to_string())
+                                self.move_made = True
+                                self.player_clicks = []
+                                self.selected_square = ()
+                            else:
+                                self.player_clicks = [self.selected_square]
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_z:
                     self.state.undo_move()
-                    self.state.undo_move()
+                    if not self.player_one or not self.player_two:
+                        self.state.undo_move()
                     self.move_made = True
                 if event.key == pg.K_ESCAPE:
                     self.running = False
+                    pg.display.quit()
+                    pg.quit()
                     sys.exit()
             if self.move_made:
                 self.valid_moves = self.state.get_all_possible_move()
@@ -170,6 +175,8 @@ class Game:
                     kq.show_results()
                     print("Game over")
                     self.running = False
+                    pg.display.quit()
+                    pg.quit()
             if not self.human_turn and self.running and not self.state.red_turn:
                 ai_move = self.ai_blue.findMove(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
@@ -220,6 +227,22 @@ class Game:
         self.draw_board()
         self.draw_piece()
         self.high_light()
+        self.draw_scores()
+        self.screen.blit(self.sub_screen, (WIDTH - sub_screen_width, 0))
+
+    def draw_scores(self):
+        self.sub_screen.fill((250, 235, 215))
+        score_section_height = sub_screen_height // 2
+        score_section_width = sub_screen_width
+        font = pg.font.Font(self.font_name, 60)
+        blue_score_text = font.render(str(self.state.blue_score), True, (0, 0, 255))
+        blue_score_rect = blue_score_text.get_rect()
+        blue_score_rect.center = (score_section_width // 2, score_section_height // 2)
+        self.sub_screen.blit(blue_score_text, blue_score_rect)
+        red_score_text = font.render(str(self.state.red_score), True, (255, 0, 0))
+        red_score_rect = red_score_text.get_rect()
+        red_score_rect.center = (score_section_width // 2, score_section_height + score_section_height // 2)
+        self.sub_screen.blit(red_score_text, red_score_rect)
 
     def show_go_screen(self):
         if self.state.game_over() == 1 or self.state.game_over() == 2:

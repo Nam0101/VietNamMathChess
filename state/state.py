@@ -26,7 +26,6 @@ class State:
             ],
             dtype=np.str_,
         )
-        self.playing = False
         self.red_turn = True
         self.red_score = 0
         self.blue_score = 0
@@ -52,12 +51,6 @@ class State:
             return 1
         if self.blue_score >= 20 or self.board[9, 4] != "r0":
             return 2
-        # return (
-        #     self.red_score >= 20
-        #     or self.blue_score >= 20
-        #     or self.board[1, 4] != "b0"
-        #     or self.board[9, 4] != "r0"
-        # )
 
     def last_move(self):
         if self.move_log.__len__() != 0:
@@ -76,7 +69,6 @@ class State:
                     self.blue_score -= int(piece[1])
                 else:
                     self.red_score -= int(piece[1])
-        self.game_over()
 
     def get_all_attack_move(self):
         moves = self.get_all_possible_move()
@@ -84,21 +76,17 @@ class State:
         return attack_moves
 
     def get_all_possible_move(self):
-        moves = []
-        for row in range(ROW):
-            for col in range(COlUMN):
-                piece = self.board[row, col]
-                turn = piece[0]
-                if (
-                        piece != "--"
-                        and (turn == "r" and self.red_turn)
-                        or (turn == "b" and not self.red_turn)
-                ):
-                    piece_step = int(self.board[row, col][1])
-                    if piece_step == 0:
-                        continue
-                    moves.extend(self.get_move_for_piece(piece_step, row, col))
-                    moves.extend(self.attack_move(piece_step, turn, row, col))
+        moves = [
+            move
+            for row in range(ROW)
+            for col in range(COlUMN)
+            if self.board[row, col] != "--"
+               and (self.board[row, col][0] == "r" and self.red_turn or self.board[row, col][0] == "b" and not self.red_turn)
+               and self.board[row, col][1].isdigit()
+            for move in (
+                    self.get_move_for_piece(int(self.board[row, col][1]), row, col)
+                    + self.attack_move(int(self.board[row, col][1]), self.board[row, col][0], row, col))
+        ]
         return moves
 
     def get_move_for_piece(self, piece_step, row, col):
@@ -174,7 +162,7 @@ class State:
             if can_attack:
                 end_row = row + i * step
                 end_col = col + j * step
-                if 0 <= end_row < 11 and 0 <= end_col < 9:
+                if 0 <= end_row < ROW and 0 <= end_col < COlUMN:
                     end_piece = self.board[end_row, end_col]
                     if end_piece[0] == enemy_color:
                         possible_moves.append(

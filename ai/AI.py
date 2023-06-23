@@ -49,43 +49,45 @@ class AI:
         score = 0
         red_score = 0
         blue_score = 0
+        board = state.board
+        checkmate = self.checkmate
         for row in range(ROW):
             for col in range(COLUMN):
-                piece = state.board[row, col]
+                piece = board[row, col]
                 if piece[0] == "r":
-                    if state.red_turn:
-                        square = getRankFile(row, col)
-                        red_score += square_values.get(square, 0)
+                    square = getRankFile(row, col)
+                    red_score += square_values.get(square, 0)
                     if int(piece[1]) == 0:
-                        score += self.checkmate
+                        score += checkmate
                     else:
                         score += piece_score[piece[1]]
                 elif piece[0] == "b":
-                    if not state.red_turn:
-                        square = getRankFile(row, col)
-                        blue_score += square_values.get(square, 0)
+                    square = getRankFile(row, col)
+                    blue_score += square_values.get(square, 0)
                     if int(piece[1]) == 0:
-                        score -= self.checkmate
+                        score -= checkmate
                     else:
                         score -= piece_score[piece[1]]
-        return score + 0.5 * red_score - 0.5 * blue_score
+        return score + (red_score - blue_score) * 0.5
 
     def evaluate_move(self, move, state):
         multi = 1 if state.red_turn else -1
         score = 0
-        if move.piece_captured[0] == "r":
-            if move.piece_captured[1] == "0":
+        piece_captured = move.piece_captured
+        if piece_captured[0] == "r":
+            if piece_captured[1] == "0":
                 score += multi * self.checkmate
             else:
-                score += multi * int(move.piece_captured[1])
-        elif move.piece_captured[0] == "b":
-            if move.piece_captured[1] == "0":
+                score += multi * int(piece_captured[1])
+        elif piece_captured[0] == "b":
+            if piece_captured[1] == "0":
                 score += multi * -self.checkmate
             else:
-                score += -multi * int(move.piece_captured[1])
+                score += -multi * int(piece_captured[1])
         square = getRankFile(move.end_row, move.end_col)
-        if square in square_values:
-            score += multi * square_values[square]
+        square_value = square_values.get(square)
+        if square_value is not None:
+            score += multi * square_value
         return score
 
     def AI_move(self):
