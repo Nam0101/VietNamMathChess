@@ -1,8 +1,14 @@
-from game.game import Game
-if __name__ == "__main__":
-    # from ui import view1
+import tkinter as tk
 
-    # view1.mainloop()
-    game = Game(3, 1, 1, True, False)
-    while game.running:
-        game.new()
+from game.game import Game
+
+if __name__ == "__main__":
+    from ui import view1
+
+    view1 = tk.Tk()
+
+    view1.mainloop()
+    # dept, algo1, algo2, player_one, player_two
+    # game = Game(3, 1, 2, True, False)
+    # while game.running:
+    #     game.new()
