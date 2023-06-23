@@ -21,7 +21,7 @@ class minimax(AI):
 
     def minimax_move(self, depth, state, alpha, beta, maximizingPlayer, start_time):
         self.state_visited += 1
-        if depth == 0 or state.game_over() or time.time() - start_time > 10:
+        if depth == 0 or state.game_over() :
             zobrist_hash = self.zh.calculate_zobrist_hash(state.board)
             if zobrist_hash in self.transposition_table:
                 self.state_found += 1
@@ -72,7 +72,7 @@ class minimax(AI):
                         break
             return min_score
 
-    def findMove(self, state, valid_moves):
+    def AI_find_move(self, state, valid_moves):
         alpha = -self.checkmate
         beta = self.checkmate
         print("Finding moves with minimax, depth = ", self.DEPTH, "...")

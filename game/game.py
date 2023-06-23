@@ -1,5 +1,6 @@
 import sys
 
+import numpy as np
 import pygame as pg
 
 import state.move as move
@@ -13,7 +14,7 @@ sub_screen_height = HEIGHT
 sub_screen_width = HEIGHT - 576
 TITLE = "Cờ Toán Việt Nam"
 FPS = 15
-FONT_NAME = "arial"
+FONT_NAME = "timesnewroman"
 icon = "img/logo.jfif"
 COLUMN = 9
 ROW = 11
@@ -48,7 +49,7 @@ class Game:
         self.move_made = False
         self.ai_blue = minimax.minimax(3)
         self.ai_red = minimax.minimax(2)
-        self.highlight_color = [(250, 0, 0), (0, 0, 250)]
+        self.highlight_color = [(230, 0, 0), (0, 0, 230)]
         pg.init()
         self.sub_screen = pg.Surface((sub_screen_width, sub_screen_height))
         pg.mixer.init()
@@ -172,13 +173,13 @@ class Game:
                         self.state.blue_score,
                         self.state.game_over(),
                     )
+                    pg.display.quit()
+                    pg.quit()
                     kq.show_results()
                     print("Game over")
                     self.running = False
-                    pg.display.quit()
-                    pg.quit()
             if not self.human_turn and self.running and not self.state.red_turn:
-                ai_move = self.ai_blue.findMove(self.state, self.valid_moves)
+                ai_move = self.ai_blue.AI_find_move(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
                 self.draw_state()
                 self.move_made = True
@@ -190,7 +191,7 @@ class Game:
                         and self.player_two
                 )
             if not self.human_turn and self.running and self.state.red_turn:
-                ai_move = self.ai_red.findMove(self.state, self.valid_moves)
+                ai_move = self.ai_red.AI_find_move(self.state, self.valid_moves)
                 self.state.make_move(ai_move)
                 self.draw_state()
                 print("AI made move", ai_move.to_string())
@@ -212,16 +213,11 @@ class Game:
                 )
 
     def draw_piece(self):
-        for i in range(ROW):
-            for j in range(COLUMN):
-                piece = self.state.board[i][j]
-                if piece != "--":
-                    self.screen.blit(
-                        self.piece_img[piece],
-                        pg.Rect(
-                            j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE
-                        ),
-                    )
+        rows, cols = np.where(self.state.board != "--")
+        for i, j in zip(rows, cols):
+            piece = self.state.board[i][j]
+            self.screen.blit(
+                self.piece_img[piece], pg.Rect(j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), )
 
     def draw_state(self):
         self.draw_board()

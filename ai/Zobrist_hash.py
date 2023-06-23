@@ -19,12 +19,11 @@ class Zobrist_hash:
 
     def calculate_zobrist_hash(self, board):
         hash_value = np.uint64(0)
-        for row in range(self.ROWS):
-            for col in range(self.COLS):
-                piece = board[row, col]
-                if piece != "--":
-                    piece_index = int(piece[1])
-                    if piece[0] == "r":
-                        piece_index += 10
-                    hash_value ^= self.zobrist_keys[row, col, piece_index]
+        rows, cols = np.where(board != "--")
+        for row, col in zip(rows, cols):
+            piece = board[row, col]
+            piece_index = int(piece[1])
+            if piece[0] == "r":
+                piece_index += 10
+            hash_value ^= self.zobrist_keys[row, col, piece_index]
         return hash_value

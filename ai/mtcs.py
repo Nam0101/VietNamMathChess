@@ -91,7 +91,7 @@ class MCTS(AI):
         self.state = None
         self.root = None
 
-    def findMove(self, statement, valid_moves, depth=0):
+    def AI_find_move(self, statement, valid_moves, depth=0):
         print("MCTS")
         self.state = statement
         start = time.time()

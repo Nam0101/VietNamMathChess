@@ -20,10 +20,7 @@ class Move:
         return cols_to_files[c] + rows_to_ranks[r]
 
     def evaluate_attack(self):
-        if self.piece_captured != "--":
-            return True
-        else:
-            return False
+        return self.piece_captured != "--"
 
     # override equals method
     def __eq__(self, other):

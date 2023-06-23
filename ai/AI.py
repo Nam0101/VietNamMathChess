@@ -1,3 +1,5 @@
+import numpy as np
+
 from ai.variable import COLUMN, square_values
 from ai.variable import ROW
 from ai.variable import cols_to_files
@@ -42,7 +44,7 @@ class AI:
     def __init__(self):
         self.DEPTH = None
         self.next_move = None
-        self.checkmate = 100
+        self.checkmate = 50
         self.stalemate = 0
 
     def evaluation(self, state):
@@ -51,23 +53,24 @@ class AI:
         blue_score = 0
         board = state.board
         checkmate = self.checkmate
-        for row in range(ROW):
-            for col in range(COLUMN):
-                piece = board[row, col]
-                if piece[0] == "r":
-                    square = getRankFile(row, col)
-                    red_score += square_values.get(square, 0)
-                    if int(piece[1]) == 0:
-                        score += checkmate
-                    else:
-                        score += piece_score[piece[1]]
-                elif piece[0] == "b":
-                    square = getRankFile(row, col)
-                    blue_score += square_values.get(square, 0)
-                    if int(piece[1]) == 0:
-                        score -= checkmate
-                    else:
-                        score -= piece_score[piece[1]]
+        red_rows, red_cols = np.where(np.char.startswith(board, "r"))
+        for row, col in zip(red_rows, red_cols):
+            piece = board[row, col]
+            square = getRankFile(row, col)
+            red_score += square_values.get(square, 0)
+            if int(piece[1]) == 0:
+                score += checkmate
+            else:
+                score += piece_score[piece[1]]
+        blue_rows, blue_cols = np.where(np.char.startswith(board, "b"))
+        for row, col in zip(blue_rows, blue_cols):
+            piece = board[row, col]
+            square = getRankFile(row, col)
+            blue_score += square_values.get(square, 0)
+            if int(piece[1]) == 0:
+                score -= checkmate
+            else:
+                score -= piece_score[piece[1]]
         return score + (red_score - blue_score) * 0.5
 
     def evaluate_move(self, move, state):
@@ -93,7 +96,7 @@ class AI:
     def AI_move(self):
         raise NotImplementedError
 
-    def findMove(self, statement, valid_moves):
+    def AI_find_move(self, statement, valid_moves):
         raise NotImplementedError
 
     def quiesce(self, alpha, beta, state):
