@@ -36,7 +36,7 @@ ALGORITHM = {0: "Minimax", 1: "Greedy"}
 # algo2: thuật toán cho AI2, int
 # player_one: người chơi 1, bool, nếu người chơi 1 là người thì True, nếu là AI thì False
 # player_two: người chơi 2, bool, nếu người chơi 2 là người thì True, nếu là AI thì False
-# ví dụ: game = Game(2,2, 2, True, False) -> người chơi 1 là AI, người chơi 2 là AI, độ sâu là 2, thuật toán 1 là Minimax, thuật toán 2 là Minimax
+# ví dụ: game = Game(2,2, 2, False, False) -> người chơi 1 là AI, người chơi 2 là AI, độ sâu là 2, thuật toán 1 là Minimax, thuật toán 2 là Minimax
 # 1-> greedy
 # 2-> AlphaBeta
 # 3 -> Negamax
@@ -128,8 +128,8 @@ class Game:
     def run(self):
         # Game Loop
         while self.running:
-            self.clock.tick(FPS)
             self.update()
+            self.draw_state()
             self.events()
             self.draw_state()
             pg.display.flip()
@@ -186,46 +186,48 @@ class Game:
                     pg.display.quit()
                     pg.quit()
                     sys.exit()
-            if self.move_made:
-                self.valid_moves = self.state.get_all_possible_move()
-                self.move_made = False
-                self.draw_state()
-                if self.state.game_over() == 1 or self.state.game_over() == 2:
-                    from ui.results import Results
-                    kq = Results(
-                        self.state.red_score,
-                        self.state.blue_score,
-                        self.state.game_over(),
-                    )
-                    pg.display.quit()
-                    pg.quit()
-                    kq.show_results()
-                    print("Game over")
-                    self.running = False
-            if not self.human_turn and self.running and not self.state.red_turn:
-                ai_move = self.ai_blue.AI_find_move(self.state, self.valid_moves)
-                self.state.make_move(ai_move)
-                self.draw_state()
-                self.move_made = True
-                print("AI made move", ai_move.to_string())
-                self.human_turn = (
-                        self.state.red_turn
-                        and self.player_one
-                        or not self.state.red_turn
-                        and self.player_two
-                )
-            if not self.human_turn and self.running and self.state.red_turn:
-                ai_move = self.ai_red.AI_find_move(self.state, self.valid_moves)
-                self.state.make_move(ai_move)
-                self.draw_state()
-                print("AI made move", ai_move.to_string())
-                self.move_made = True
-                self.human_turn = (
-                        self.state.red_turn
-                        and self.player_one
-                        or not self.state.red_turn
-                        and self.player_two
-                )
+        if self.move_made:
+            self.valid_moves = self.state.get_all_possible_move()
+            self.move_made = False
+            self.draw_state()
+        if self.state.game_over() == 1 or self.state.game_over() == 2:
+            from ui.results import Results
+            kq = Results(
+                self.state.red_score,
+                self.state.blue_score,
+                self.state.game_over(),
+            )
+            pg.display.quit()
+            pg.quit()
+            kq.show_results()
+            print("Game over")
+            self.running = False
+        if not self.human_turn and self.running and not self.state.red_turn:
+            self.draw_state()
+            ai_move = self.ai_blue.AI_find_move(self.state, self.valid_moves)
+            self.state.make_move(ai_move)
+            self.draw_state()
+            self.move_made = True
+            print("AI made move", ai_move.to_string())
+            self.human_turn = (
+                    self.state.red_turn
+                    and self.player_one
+                    or not self.state.red_turn
+                    and self.player_two
+            )
+        if not self.human_turn and self.running and self.state.red_turn:
+            self.draw_state()
+            ai_move = self.ai_red.AI_find_move(self.state, self.valid_moves)
+            self.state.make_move(ai_move)
+            self.draw_state()
+            print("AI made move", ai_move.to_string())
+            self.move_made = True
+            self.human_turn = (
+                    self.state.red_turn
+                    and self.player_one
+                    or not self.state.red_turn
+                    and self.player_two
+            )
 
     def draw_board(self):
         for i in range(ROW):
@@ -277,7 +279,7 @@ class Game:
             pg.quit()
             print("game over")
             self.running = False
-        pass
+
 
     def high_light(self):
         if self.selected_square != () and self.selected_square != (INF, INF):

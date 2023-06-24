@@ -1,5 +1,5 @@
-from ai.variable import cols_to_files
-from ai.variable import rows_to_ranks
+from ultils.variable import cols_to_files
+from ultils.variable import rows_to_ranks
 
 
 class Move:

@@ -1,10 +1,10 @@
 import numpy as np
 
-from ai.variable import COLUMN, square_values
-from ai.variable import ROW
-from ai.variable import cols_to_files
-from ai.variable import piece_score
-from ai.variable import rows_to_ranks
+from ultils.variable import COLUMN, square_values
+from ultils.variable import ROW
+from ultils.variable import cols_to_files
+from ultils.variable import piece_score
+from ultils.variable import rows_to_ranks
 
 
 def getRankFile(r, c):

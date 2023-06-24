@@ -1,8 +1,7 @@
-import itertools
 import time
 
 from ai.AI import AI
-from ai.Zobrist_hash import Zobrist_hash
+from ultils.Zobrist_hash import Zobrist_hash
 
 
 class Negamax(AI):
