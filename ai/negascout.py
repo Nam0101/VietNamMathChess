@@ -1,3 +1,4 @@
+import random
 import time
 
 from ai.AI import AI
@@ -13,6 +14,7 @@ class NegaScout(AI):
         self.state_visited = 0
         self.transposition_table = {}
         self.state_found = 0
+        self.move_log = []
 
     def evaluation(self, state):
         evaluation = super().evaluation(state)
@@ -30,14 +32,20 @@ class NegaScout(AI):
                 self.transposition_table[zobrist_hash] = evaluation
                 return evaluation
         valid_moves = state.get_all_possible_move()
+        sorted_moves = (player_move for player_move in
+                        sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state), reverse=state.red_turn
+                               ))
         max_score = float('-inf')
-        for i, move in enumerate(valid_moves):
+        for i, move in enumerate(sorted_moves):
+            if len(self.move_log) > 2:
+                if move in self.move_log[-len(self.move_log) // 2 + 1:]:
+                    continue
             state.make_move(move)
             if i == 0:
                 score = -self.negascout_alpha_beta(state, depth - 1, -beta, -alpha,
                                                    -turn_multiplier)
             else:
-                score = -self.negascout_alpha_beta(state, depth - 1, -alpha - 1, -alpha,
+                score = -self.negascout_alpha_beta(state, depth - 1, -alpha - 0.5, -alpha,
                                                    -turn_multiplier)
                 if alpha < score < beta:
                     score = -self.negascout_alpha_beta(state, depth - 1, -beta, -score,
@@ -57,7 +65,7 @@ class NegaScout(AI):
         self.result_move = None
         print("Finding moves with NegaScout, depth = ", self.DEPTH, "...")
         score = self.negascout_alpha_beta(statement, self.DEPTH, float('-inf'), float('inf'),
-                                           1 if statement.red_turn else -1)
+                                          1 if statement.red_turn else -1)
         end_time = time.time()
         print("Time used: ", end_time - start_time)
         print("Score:", score)
@@ -65,4 +73,8 @@ class NegaScout(AI):
         print("Transposition table size:", len(self.transposition_table),
               " states found in table: " + str(self.state_found))
         self.state_visited = 0
+        self.move_log.append(self.result_move)
+        if self.result_move is None:
+            sorted_moves = sorted(valid_moves, key=lambda move: self.evaluation(statement), reverse=True)
+            return sorted_moves[-1]
         return self.result_move

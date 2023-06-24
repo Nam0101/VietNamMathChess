@@ -49,15 +49,15 @@ class AI:
 
     def evaluation(self, state):
         score = 0
-        red_score = 0
-        blue_score = 0
+        red_good_index = 0
+        blue_good_index = 0
         board = state.board
         checkmate = self.checkmate
         red_rows, red_cols = np.where(np.char.startswith(board, "r"))
         for row, col in zip(red_rows, red_cols):
             piece = board[row, col]
             square = getRankFile(row, col)
-            red_score += square_values.get(square, 0)
+            red_good_index += square_values.get(square, 0)
             if int(piece[1]) == 0:
                 score += checkmate
             else:
@@ -66,12 +66,17 @@ class AI:
         for row, col in zip(blue_rows, blue_cols):
             piece = board[row, col]
             square = getRankFile(row, col)
-            blue_score += square_values.get(square, 0)
+            blue_good_index += square_values.get(square, 0)
             if int(piece[1]) == 0:
                 score -= checkmate
             else:
                 score -= piece_score[piece[1]]
-        return score + (red_score - blue_score) * 0.2
+        red_score, blue_score = state.calculate_score()
+        if red_score > 25:
+            score += checkmate
+        elif blue_score > 25:
+            score -= checkmate
+        return score + (red_good_index - blue_good_index) * 0.2
 
     def evaluate_move(self, move, state):
         multi = 1 if state.red_turn else -1

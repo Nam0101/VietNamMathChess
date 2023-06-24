@@ -6,6 +6,7 @@ current_state = None
 class greedy(AI):
     def __init__(self):
         super().__init__()
+        self.move_log = []
 
     def evaluation(self, state):
         evaluation = super().evaluation(state)
@@ -17,10 +18,14 @@ class greedy(AI):
         best_move = None
         valid_moves = statement.get_all_possible_move()
         for player_move in valid_moves:
+            if len(self.move_log) > 2:
+                if player_move in self.move_log[-len(self.move_log)//2 + 1:]:
+                    continue
             statement.make_move(player_move)
             score = turn_multiplier * self.evaluation(statement)
             if score > max_score:
                 max_score = score
                 best_move = player_move
             statement.undo_move()
+        self.move_log.append(best_move)
         return best_move

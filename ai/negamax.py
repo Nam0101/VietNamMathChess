@@ -1,3 +1,4 @@
+import random
 import time
 
 from ai.AI import AI
@@ -13,6 +14,7 @@ class Negamax(AI):
         self.state_visited = 0
         self.transposition_table = {}
         self.state_found = 0
+        self.move_log = []
 
     def evaluation(self, state):
         evaluation = super().evaluation(state)
@@ -35,6 +37,9 @@ class Negamax(AI):
                         sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                reverse=state.red_turn))
         for move in sorted_moves:
+            if len(self.move_log) > 2:
+                if move in self.move_log[-len(self.move_log)//2 + 1:]:
+                    continue
             state.make_move(move)
             score = -self.negamax_alpha_beta(state, depth - 1, -beta, -alpha,
                                              -turn_multiplier)
@@ -61,4 +66,8 @@ class Negamax(AI):
         print("Transposition table size:", len(self.transposition_table),
               " states found in table: " + str(self.state_found))
         self.state_visited = 0
+        self.move_log.append(self.result_move)
+        if self.result_move is None:
+            sorted_moves = sorted(valid_moves, key=lambda move: self.evaluation(statement), reverse=True)
+            return sorted_moves[-1]
         return self.result_move

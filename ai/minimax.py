@@ -1,3 +1,4 @@
+import random
 import time
 
 from ai.AI import AI
@@ -14,6 +15,7 @@ class minimax(AI):
         self.MAX_TIME = 10
         self.transposition_table = {}
         self.zh = Zobrist_hash()
+        self.move_log = []
 
     def evaluation(self, state):
         evaluation = super().evaluation(state)
@@ -117,7 +119,7 @@ class minimax(AI):
     def AI_find_move(self, state, valid_moves):
         alpha = -self.checkmate
         beta = self.checkmate
-        print("Finding moves with minimax, depth = ", self.DEPTH, "...")
+        print("Finding moves with AlphaBeta, depth = ", self.DEPTH, "...")
         start_time = time.time()
         score = self.minimax_move(self.DEPTH, state, alpha, beta, state.red_turn, start_time)
         # score = self.minimax_move_noAlphaBeta(2, state, state.red_turn)
@@ -129,4 +131,8 @@ class minimax(AI):
         print("Transposition table size:", len(self.transposition_table),
               " states found in table: " + str(self.state_found))
         self.state_visited = 0
+        self.move_log.append(self.next_move)
+        if self.next_move is None:
+            sorted_moves = sorted(valid_moves, key=lambda move: self.evaluation(state), reverse=True)
+            return sorted_moves[-1]
         return self.next_move
