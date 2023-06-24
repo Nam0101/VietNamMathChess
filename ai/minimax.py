@@ -89,7 +89,6 @@ class minimax(AI):
             sorted_moves = (player_move for player_move in
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))
-            print("Valid moves: ", len(valid_moves))
             for move in sorted_moves:
                 state.make_move(move)
                 eval_score = self.minimax_move_noAlphaBeta(depth - 1, state, False)
@@ -105,7 +104,6 @@ class minimax(AI):
             sorted_moves = (player_move for player_move in
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))
-            print("Valid moves: ", len(valid_moves))
             for move in sorted_moves:
                 state.make_move(move)
                 eval_score = self.minimax_move_noAlphaBeta(depth - 1, state, True)
@@ -121,8 +119,8 @@ class minimax(AI):
         beta = self.checkmate
         print("Finding moves with minimax, depth = ", self.DEPTH, "...")
         start_time = time.time()
-        # score = self.minimax_move(self.DEPTH, state, alpha, beta, state.red_turn, start_time)
-        score = self.minimax_move_noAlphaBeta(2, state, state.red_turn)
+        score = self.minimax_move(self.DEPTH, state, alpha, beta, state.red_turn, start_time)
+        # score = self.minimax_move_noAlphaBeta(2, state, state.red_turn)
         # score = self.mtdf(0, self.DEPTH, state)
         end_time = time.time()
         print("Time used: ", end_time - start_time)
