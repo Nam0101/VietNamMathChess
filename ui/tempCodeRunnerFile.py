@@ -1,1 +1,1 @@
-
+text_scale = canvas.create_text( 270,395,text=text,fill="#ffffff",font=("arial", 20, "bold"))

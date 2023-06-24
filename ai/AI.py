@@ -1,17 +1,10 @@
-import time
-
 import numpy as np
-from numba import jit
 
-from ai.variable import square_values
-from ai.variable import piece_score
-from ai.variable import COLUMN
+from ai.variable import COLUMN, square_values
 from ai.variable import ROW
-from ai.variable import ranks_to_rows
-from ai.variable import files_to_cols
-from ai.variable import rows_to_ranks
 from ai.variable import cols_to_files
-from state.state import State
+from ai.variable import piece_score
+from ai.variable import rows_to_ranks
 
 
 def getRankFile(r, c):
@@ -51,45 +44,74 @@ class AI:
     def __init__(self):
         self.DEPTH = None
         self.next_move = None
-        self.checkmate = 100
+        self.checkmate = 50
         self.stalemate = 0
 
     def evaluation(self, state):
-        square_values = {"e4": 2, "e5": 2, "d4": 2, "d5": 2, "c6": 1, "d6": 1, "e6": 1, "f6": 1,
-                         "c3": 1, "d3": 1, "e3": 1, "f3": 1, "c4": 1, "c5": 1, "f4": 1, "f5": 1}
         score = 0
         red_score = 0
         blue_score = 0
-        for row in range(ROW):
-            for col in range(COLUMN):
-                piece = state.board[row, col]
-                if piece[0] == "r":
-                    if state.red_turn:
-                        square = getRankFile(row, col)
-                        red_score += square_values.get(square, 0)
-                    if int(piece[1]) == 0:
-                        score += self.checkmate
-                    else:
-                        score += piece_score[piece[1]]
-                elif piece[0] == "b":
-                    if not state.red_turn:
-                        square = getRankFile(row, col)
-                        blue_score += square_values.get(square, 0)
-                    if int(piece[1]) == 0:
-                        score -= self.checkmate
-                    else:
-                        score -= piece_score[piece[1]]
-        # red_possible_moves = len(state.get_all_possible_move())
-        # state.red_turn = not state.red_turn
-        # blue_possible_moves = len(state.get_all_possible_move())
-        # state.red_turn = not state.red_turn
-        # possible_move = red_possible_moves - blue_possible_moves if state.red_turn else blue_possible_moves - red_possible_moves
-        return score + 0.5 * red_score - 0.5 * blue_score
+        board = state.board
+        checkmate = self.checkmate
+        red_rows, red_cols = np.where(np.char.startswith(board, "r"))
+        for row, col in zip(red_rows, red_cols):
+            piece = board[row, col]
+            square = getRankFile(row, col)
+            red_score += square_values.get(square, 0)
+            if int(piece[1]) == 0:
+                score += checkmate
+            else:
+                score += piece_score[piece[1]]
+        blue_rows, blue_cols = np.where(np.char.startswith(board, "b"))
+        for row, col in zip(blue_rows, blue_cols):
+            piece = board[row, col]
+            square = getRankFile(row, col)
+            blue_score += square_values.get(square, 0)
+            if int(piece[1]) == 0:
+                score -= checkmate
+            else:
+                score -= piece_score[piece[1]]
+        return score + (red_score - blue_score) * 0.2
+
+    def evaluate_move(self, move, state):
+        multi = 1 if state.red_turn else -1
+        score = 0
+        piece_captured = move.piece_captured
+        if piece_captured[0] == "r":
+            if piece_captured[1] == "0":
+                score += multi * self.checkmate
+            else:
+                score += multi * int(piece_captured[1])
+        elif piece_captured[0] == "b":
+            if piece_captured[1] == "0":
+                score += multi * -self.checkmate
+            else:
+                score += -multi * int(piece_captured[1])
+        square = getRankFile(move.end_row, move.end_col)
+        square_value = square_values.get(square)
+        if square_value is not None:
+            score += multi * square_value
+        return score
 
     def AI_move(self):
         raise NotImplementedError
 
-    def findMove(self, statement, valid_moves):
+    def AI_find_move(self, statement, valid_moves):
         raise NotImplementedError
 
-
+    def quiesce(self, alpha, beta, state):
+        stand_pat = self.evaluation(state)
+        if stand_pat >= beta:
+            return beta
+        if alpha < stand_pat:
+            alpha = stand_pat
+        valid_moves = state.get_all_attack_move()
+        for player_move in valid_moves:
+            state.make_move(player_move)
+            score = -self.quiesce(-beta, -alpha, state)
+            state.undo_move()
+            if score >= beta:
+                return beta
+            if score > alpha:
+                alpha = score
+        return alpha

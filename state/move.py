@@ -1,21 +1,8 @@
-from numba import int64, boolean
-from numba.experimental import jitclass
-
-import numpy as np
-from ai.variable import COLUMN
-from ai.variable import ROW
-from ai.variable import piece_score
-from ai.variable import square_values
-from ai.variable import ranks_to_rows
-from ai.variable import files_to_cols
-from ai.variable import rows_to_ranks
 from ai.variable import cols_to_files
+from ai.variable import rows_to_ranks
 
 
 class Move:
-    # map key to value
-    # key : value
-
     def __init__(self, start_square, end_square, board):
         self.start_row = start_square[0]
         self.start_col = start_square[1]
@@ -33,15 +20,11 @@ class Move:
         return cols_to_files[c] + rows_to_ranks[r]
 
     def evaluate_attack(self):
-        if self.piece_captured != "--":
-            return True
-        else:
-            return False
+        return self.piece_captured != "--"
 
     # override equals method
     def __eq__(self, other):
-        if isinstance(other, Move):
-            return self.move_ID == other.move_ID
+        return isinstance(other, Move) and self.move_ID == other.move_ID
 
     def to_string(self):
         s = "Move " + self.piece_moved + " from " + self.getRankFile(self.start_row,

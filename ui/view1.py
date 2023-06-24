@@ -1,82 +1,68 @@
 from tkinter import *
+import tkinter as tk
+# import sys
+# import pygame as pg
 from PIL import ImageTk, Image
-import pygame as pg
-import sys
 
-path = "..//VietNamMathChess"
-sys.path.append(path)
-from game.game import Game
+# path = "..//VietNamMathChess"
+# sys.path.append(path)
+# from game import game
 
+player_one = True
+player_two = True
 
-def click_man_man():
+def click_man_man(event):
+    global player_one, player_two
+    player_one = True
+    player_two = True
     view1.destroy()
-    g = Game()
-    while g.running:
-        g.new()
-    pg.quit()
-    sys.exit()
 
-
-def click_view2():
+def click_man_bot(event):
+    global player_one, player_two
+    player_one = True
+    player_two = False
     view1.destroy()
-    from ui import view2
 
+def click_bot_bot(event):
+    global player_one, player_two
+    player_one = False
+    player_two = False
+    view1.destroy()
 
-def click_instruct():
-    from ui.instruct import show_instruct
+def click_instruct(event):
+    from ui import instruct
 
-    show_instruct()
-
-
-view1 = Tk()
+view1 = tk.Tk()
 view1.title(" CỜ TOÁN VIỆT NAM")
-view1.geometry("600x650+400+30")
+view1.geometry("550x650+400+30")
 view1.resizable(False, False)
 view1.iconbitmap("img/logo.ico")
-img = ImageTk.PhotoImage(Image.open("img/bg1.png").resize((600, 650)))
-panel = Label(view1, image=img)
-panel.place(x=0, y=0, relwidth=1, relheight=1)
 
-bt1 = ImageTk.PhotoImage(Image.open("img/bt1.png").resize((300, 80)))
-bt2 = ImageTk.PhotoImage(Image.open("img/bt2.png").resize((300, 80)))
-bt3 = ImageTk.PhotoImage(Image.open("img/bt3.png").resize((300, 80)))
-bt4 = ImageTk.PhotoImage(Image.open("img/bt4.png").resize((300, 80)))
+canvas = tk.Canvas(view1, width=700, height=750)
+canvas.place(x=-2, y=-1)
+
+img = ImageTk.PhotoImage(Image.open("img/bg1.png").resize((552, 652)))
+bg = canvas.create_image(0, 0, anchor=tk.NW, image=img)
 
 
-botton_man_man = Button(
-    view1,
-    image=bt1,
-    bg="#062336",
-    border=0,
-    command=click_man_man,
-)
-botton_man_man.place(x=150, y=150, width=300, height=80)
+bt1 = ImageTk.PhotoImage(Image.open("img/bt1_1.png").resize((300, 90)))
+bt2 = ImageTk.PhotoImage(Image.open("img/bt1_2.png").resize((300, 90)))
+bt3 = ImageTk.PhotoImage(Image.open("img/bt1_3.png").resize((300, 90)))
+bt4 = ImageTk.PhotoImage(Image.open("img/bt1_4.png").resize((250, 80)))
 
-button_man_bot = Button(
-    view1,
-    image=bt2,
-    bg="#062336",
-    border=0,
-    command=click_view2,
-)
-button_man_bot.place(x=150, y=250, width=300, height=80)
+button_man_man = canvas.create_image(125, 150, anchor=tk.NW, image=bt1)
+canvas.tag_bind(button_man_man,"<Button-1>",click_man_man)
 
-button_bot_bot = Button(
-    view1,
-    image=bt3,
-    bg="#062336",
-    border=0,
-    command=click_view2,
-)
-button_bot_bot.place(x=150, y=350, width=300, height=80)
+button_man_bot = canvas.create_image(125, 265, anchor=tk.NW, image=bt2)
+canvas.tag_bind(button_man_bot,"<Button-1>",click_man_bot)
 
-button_instruct = Button(
-    view1,
-    image=bt4,
-    bg="#062336",
-    border=0,
-    command=click_instruct,
-)
-button_instruct.place(x=153, y=480, width=300, height=80)
+button_bot_bot = canvas.create_image(125, 380, anchor=tk.NW, image=bt3)
+canvas.tag_bind(button_bot_bot,"<Button-1>",click_bot_bot)
+
+button_instruct = canvas.create_image(150, 530, anchor=tk.NW, image=bt4)
+canvas.tag_bind(button_instruct,"<Button-1>",click_instruct)
+
+
 
 view1.mainloop()
+

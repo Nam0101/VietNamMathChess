@@ -1,13 +1,13 @@
 from tkinter import *
 
 
-def show_instruct():
-    instruct.deiconify()
+# def show_instruct():
+#     instruct.deiconify()
 
 
 instruct = Tk()
 instruct.title(" CỜ TOÁN VIỆT NAM")
-instruct.geometry("600x600+400+50")
+instruct.geometry("600x600+375+70")
 instruct.resizable(False, False)
 instruct.iconbitmap("img/logo.ico")
 instruct.configure(background="#769656")

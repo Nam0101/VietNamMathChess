@@ -1,88 +1,65 @@
-from tkinter import *
+import tkinter as tk
+
 from PIL import ImageTk, Image
 
-thuat_toan = 1
+algo = 0
 
-
-def click_tt1():
-    global thuat_toan
-    thuat_toan = 1
+def click_tt1(event):
+    global algo
+    algo = 1
     view2.destroy()
-    from ui import view3
 
-
-def click_tt2():
-    global thuat_toan
-    thuat_toan = 2
+def click_tt2(event):
+    global algo
+    algo = 2
     view2.destroy()
-    from ui import view3
 
-
-def clicktt3():
-    global thuat_toan
-    thuat_toan = 3
+def click_tt3(event):
+    global algo
+    algo = 3
     view2.destroy()
-    from ui import view3
 
-
-def click_back():
-    # view2.withdraw()
+def click_tt4(event):
+    global algo
+    algo = 4
     view2.destroy()
-    from ui import view1
 
-    # view1.show_view1()
+def click_back(event):
+    global algo
+    view2.destroy()
+    algo = -1
 
-
-view2 = Tk()
+view2 = tk.Tk()
 view2.title(" CỜ TOÁN VIỆT NAM")
-view2.geometry("600x650+400+30")
+view2.geometry("550x650+400+30")
 view2.resizable(False, False)
 view2.iconbitmap("img/logo.ico")
-img = ImageTk.PhotoImage(Image.open("img/bg2.png").resize((600, 650)))
-panel = Label(view2, image=img)
-panel.place(x=0, y=0, relwidth=1, relheight=1)
+
+canvas = tk.Canvas(view2, width=700, height=750)
+canvas.place(x=-2, y=-1)
+
+img = ImageTk.PhotoImage(Image.open("img/bg2.png").resize((552, 652)))
+bg = canvas.create_image(0, 0, anchor=tk.NW, image=img)
 
 bt1 = ImageTk.PhotoImage(Image.open("img/bt2_1.png").resize((300, 70)))
 bt2 = ImageTk.PhotoImage(Image.open("img/bt2_2.png").resize((300, 70)))
 bt3 = ImageTk.PhotoImage(Image.open("img/bt2_3.png").resize((300, 70)))
 bt4 = ImageTk.PhotoImage(Image.open("img/bt2_4.png").resize((300, 70)))
+bt5 = ImageTk.PhotoImage(Image.open("img/bt2_5.png").resize((300, 70)))
 
+button_tt1 = canvas.create_image(125, 130, anchor=tk.NW, image=bt1)
+canvas.tag_bind(button_tt1,"<Button-1>",click_tt1)
 
-button_tt1 = Button(
-    view2,
-    image=bt1,
-    bg="#353554",
-    border=0,
-    command=click_tt1,
-)
-button_tt1.place(x=150, y=170, width=300, height=70)
+button_tt2 = canvas.create_image(125, 220, anchor=tk.NW, image=bt2)
+canvas.tag_bind(button_tt2,"<Button-1>",click_tt2)
 
-button_tt2 = Button(
-    view2,
-    image=bt2,
-    bg="#353554",
-    border=0,
-    command=click_tt2,
-)
-button_tt2.place(x=150, y=300, width=300, height=70)
+button_tt3 = canvas.create_image(125, 310, anchor=tk.NW, image=bt3)
+canvas.tag_bind(button_tt3,"<Button-1>",click_tt3)
 
-buttontt3 = Button(
-    view2,
-    image=bt3,
-    bg="#353554",
-    border=0,
-    command=clicktt3,
-)
-buttontt3.place(x=150, y=430, width=300, height=70)
+button_tt4 = canvas.create_image(125, 400, anchor=tk.NW, image=bt4)
+canvas.tag_bind(button_tt4,"<Button-1>",click_tt4)
 
-button_back = Button(
-    view2,
-    image=bt4,
-    bg="#373b78",
-    border=0,
-    command=click_back,
-)
-button_back.place(x=150, y=550, width=300, height=70)
-
+button_back = canvas.create_image(125, 540, anchor=tk.NW, image=bt5)
+canvas.tag_bind(button_back,"<Button-1>",click_back)
 
 view2.mainloop()
