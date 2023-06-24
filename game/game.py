@@ -202,30 +202,30 @@ class Game:
                     kq.show_results()
                     print("Game over")
                     self.running = False
-            if not self.human_turn and self.running and not self.state.red_turn:
-                ai_move = self.ai_blue.AI_find_move(self.state, self.valid_moves)
-                self.state.make_move(ai_move)
-                self.draw_state()
-                self.move_made = True
-                print("AI made move", ai_move.to_string())
-                self.human_turn = (
-                        self.state.red_turn
-                        and self.player_one
-                        or not self.state.red_turn
-                        and self.player_two
-                )
-            if not self.human_turn and self.running and self.state.red_turn:
-                ai_move = self.ai_red.AI_find_move(self.state, self.valid_moves)
-                self.state.make_move(ai_move)
-                self.draw_state()
-                print("AI made move", ai_move.to_string())
-                self.move_made = True
-                self.human_turn = (
-                        self.state.red_turn
-                        and self.player_one
-                        or not self.state.red_turn
-                        and self.player_two
-                )
+        if not self.human_turn and self.running and not self.state.red_turn:
+            ai_move = self.ai_blue.AI_find_move(self.state, self.valid_moves)
+            self.state.make_move(ai_move)
+            self.draw_state()
+            self.move_made = True
+            print("AI made move", ai_move.to_string())
+            self.human_turn = (
+                    self.state.red_turn
+                    and self.player_one
+                    or not self.state.red_turn
+                    and self.player_two
+            )
+        if not self.human_turn and self.running and self.state.red_turn:
+            ai_move = self.ai_red.AI_find_move(self.state, self.valid_moves)
+            self.state.make_move(ai_move)
+            self.draw_state()
+            print("AI made move", ai_move.to_string())
+            self.move_made = True
+            self.human_turn = (
+                    self.state.red_turn
+                    and self.player_one
+                    or not self.state.red_turn
+                    and self.player_two
+            )
 
     def draw_board(self):
         for i in range(ROW):

@@ -47,9 +47,9 @@ class State:
             self.red_turn = not self.red_turn
 
     def game_over(self):
-        if self.red_score >= 20 or self.board[1, 4] != "b0":
+        if self.red_score >= 25 or self.board[1, 4] != "b0":
             return 1
-        if self.blue_score >= 20 or self.board[9, 4] != "r0":
+        if self.blue_score >= 25 or self.board[9, 4] != "r0":
             return 2
 
     def last_move(self):
