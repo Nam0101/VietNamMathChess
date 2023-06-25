@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 from .move import Move
@@ -63,12 +65,12 @@ class State:
         row, col = np.where(self.board != "--")
         for r, c in zip(row, col):
             piece = self.board[r, c]
+            score = int(piece[1])
             if piece[0] == "r":
-                self.blue_score -= int(piece[1])
+                self.blue_score -= score
             else:
-                self.red_score -= int(piece[1])
+                self.red_score -= score
         return self.red_score, self.blue_score
-
 
     def get_all_attack_move(self):
         moves = self.get_all_possible_move()
@@ -172,8 +174,6 @@ class State:
         s = self.board.__str__()
         s += "turn: " + self.red_turn.__str__() + "\n"
         return s
-
-
 
     def is_check(self):
         king_row = 1 if self.red_turn else 9

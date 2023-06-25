@@ -53,6 +53,8 @@ class AI:
         blue_good_index = 0
         board = state.board
         checkmate = self.checkmate
+        red_score = 45
+        blue_score = 45
         red_rows, red_cols = np.where(np.char.startswith(board, "r"))
         for row, col in zip(red_rows, red_cols):
             piece = board[row, col]
@@ -62,6 +64,7 @@ class AI:
                 score += checkmate
             else:
                 score += piece_score[piece[1]]
+                red_score -= int(piece[1])
         blue_rows, blue_cols = np.where(np.char.startswith(board, "b"))
         for row, col in zip(blue_rows, blue_cols):
             piece = board[row, col]
@@ -71,7 +74,7 @@ class AI:
                 score -= checkmate
             else:
                 score -= piece_score[piece[1]]
-        red_score, blue_score = state.calculate_score()
+                blue_score -= int(piece[1])
         if red_score > 25:
             score += checkmate
         elif blue_score > 25:
