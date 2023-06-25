@@ -71,11 +71,11 @@ class State:
         return self.red_score, self.blue_score
 
     def get_all_attack_move(self):
-        moves = self.get_all_possible_move()
+        moves = self.get_all_valid_move()
         attack_moves = filter(lambda move: move.is_attack, moves)
         return attack_moves
 
-    def get_all_possible_move(self):
+    def get_all_valid_move(self):
         moves = []
         rows, cols = np.where(self.board != "--")
         for row, col in zip(rows, cols):
@@ -176,7 +176,7 @@ class State:
     def is_check(self):
         king_row = 1 if self.red_turn else 9
         king_col = 4
-        for move in self.get_all_possible_move():
+        for move in self.get_all_valid_move():
             if move.end_row == king_row and move.end_col == king_col:
                 return True
         return False

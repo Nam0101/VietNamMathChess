@@ -16,7 +16,7 @@ class greedy(AI):
         turn_multiplier = 1 if statement.red_turn else -1
         max_score = -self.checkmate
         best_move = None
-        valid_moves = statement.get_all_possible_move()
+        valid_moves = statement.get_all_valid_move()
         for player_move in valid_moves:
             if len(self.move_log) > 2:
                 if player_move in self.move_log[-len(self.move_log)//2 + 1:]:

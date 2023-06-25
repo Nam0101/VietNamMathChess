@@ -33,7 +33,7 @@ class minimax(AI):
                 return evaluation
         if maximizingPlayer:
             max_score = -self.checkmate
-            valid_moves = state.get_all_possible_move()
+            valid_moves = state.get_all_valid_move()
             sorted_moves = (player_move for player_move in
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))
@@ -54,7 +54,7 @@ class minimax(AI):
             return max_score
         else:
             min_score = self.checkmate
-            valid_moves = state.get_all_possible_move()
+            valid_moves = state.get_all_valid_move()
             sorted_moves = (player_move for player_move in
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))
@@ -86,7 +86,7 @@ class minimax(AI):
                 return evaluation
         if maximizingPlayer:
             max_score = -self.checkmate
-            valid_moves = state.get_all_possible_move()
+            valid_moves = state.get_all_valid_move()
             sorted_moves = (player_move for player_move in
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))
@@ -101,7 +101,7 @@ class minimax(AI):
             return max_score
         else:
             min_score = self.checkmate
-            valid_moves = state.get_all_possible_move()
+            valid_moves = state.get_all_valid_move()
             sorted_moves = (player_move for player_move in
                             sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                    reverse=state.red_turn))

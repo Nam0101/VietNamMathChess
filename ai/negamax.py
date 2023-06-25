@@ -31,7 +31,7 @@ class Negamax(AI):
                 self.transposition_table[zobrist_hash] = evaluation
                 return evaluation
         max_score = -self.checkmate
-        valid_moves = state.get_all_possible_move()
+        valid_moves = state.get_all_valid_move()
         sorted_moves = (player_move for player_move in
                         sorted(valid_moves, key=lambda moves: self.evaluate_move(moves, state),
                                reverse=state.red_turn))

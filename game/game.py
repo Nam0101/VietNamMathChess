@@ -50,7 +50,7 @@ class Game:
         self.all_sprites = None
         self.selected_square = (INF, INF)
         self.previous_square = ()
-        self.valid_moves = self.state.get_all_possible_move()
+        self.valid_moves = self.state.get_all_valid_move()
         self.player_clicks = []
         self.ai_red = None
         self.ai_blue = None
@@ -187,7 +187,7 @@ class Game:
                     pg.quit()
                     sys.exit()
         if self.move_made:
-            self.valid_moves = self.state.get_all_possible_move()
+            self.valid_moves = self.state.get_all_valid_move()
             self.move_made = False
             self.draw_state()
         if self.state.game_over() == 1 or self.state.game_over() == 2:
