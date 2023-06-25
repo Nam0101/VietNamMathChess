@@ -3,6 +3,7 @@ import time
 from ai.AI import AI
 from ultils.Zobrist_hash import zobrist_hash
 
+
 class minimax(AI):
     def __init__(self, depth):
         super().__init__()
