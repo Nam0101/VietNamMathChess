@@ -1,9 +1,7 @@
-import random
 import time
 
 from ai.AI import AI
-from ultils.Zobrist_hash import Zobrist_hash
-
+from ultils.Zobrist_hash import zobrist_hash
 
 class minimax(AI):
     def __init__(self, depth):
@@ -14,7 +12,7 @@ class minimax(AI):
         self.state_visited = 0
         self.MAX_TIME = 10
         self.transposition_table = {}
-        self.zh = Zobrist_hash()
+        self.zh = zobrist_hash()
         self.move_log = []
 
     def evaluation(self, state):

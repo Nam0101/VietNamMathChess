@@ -1,14 +1,13 @@
-import random
 import time
 
 from ai.AI import AI
-from ultils.Zobrist_hash import Zobrist_hash
+from ultils.Zobrist_hash import zobrist_hash
 
 
 class NegaScout(AI):
     def __init__(self, depth):
         super().__init__()
-        self.zh = Zobrist_hash()
+        self.zh = zobrist_hash()
         self.result_move = None
         self.DEPTH = depth
         self.state_visited = 0

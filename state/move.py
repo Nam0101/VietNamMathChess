@@ -16,7 +16,8 @@ class Move:
     def getChessNotation(self):
         return self.getRankFile(self.start_row, self.start_col) + self.getRankFile(self.end_row, self.end_col)
 
-    def getRankFile(self, r, c):
+    @staticmethod
+    def getRankFile(r, c):
         return cols_to_files[c] + rows_to_ranks[r]
 
     def evaluate_attack(self):

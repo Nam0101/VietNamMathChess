@@ -1,5 +1,5 @@
-from tkinter import *
 import tkinter as tk
+
 # import sys
 # import pygame as pg
 from PIL import ImageTk, Image
@@ -30,7 +30,7 @@ def click_bot_bot(event):
     view1.destroy()
 
 def click_instruct(event):
-    from ui import instruct
+    pass
 
 view1 = tk.Tk()
 view1.title(" CỜ TOÁN VIỆT NAM")

@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 
-class Zobrist_hash:
+class zobrist_hash:
     def __init__(self):
         self.NUM_PIECES = 20
         self.ROWS = 11
